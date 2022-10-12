@@ -1,0 +1,23 @@
+version: '3.8'
+services: 
+  pgsql:
+    image: 'postgres:14.5-alpine'
+    ports: 
+      - '5432:5432'
+    environment: 
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postgresdb
+      POSTGRES_USER: root
+    networks: 
+      - 'database-net'
+    volumes: 
+      - ./data:/var/lib/postgresql/data
+  
+  adminer:
+    image:  'adminer'
+    ports: 
+      - '8080:8080'
+    networks: 
+      - 'database-net'
+networks:
+  database-net:
