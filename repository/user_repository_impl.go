@@ -33,7 +33,7 @@ func (repository *UserRepositoryImpl) FindAll() ([]entity.User, error) {
 	var users []entity.User
 	for _, item := range items {
 		users = append(users, entity.User{
-			Id:       item.Id,
+			// Id:       item.Id,
 			Name:     item.Name,
 			Email:    item.Email,
 			Password: item.Password,
@@ -52,12 +52,13 @@ func (repository *UserRepositoryImpl) Register(request model.CreateUserRequest) 
 	ctx, cancel := config.NewPostgresContext()
 	defer cancel()
 	request.Password = helper.ToHashedPassword(request.Password)
-	repository.DB.WithContext(ctx).Create(&entity.User{
-		Id:       request.Id,
+	user = entity.User{
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: request.Password,
-	})
+	}
+	result := repository.DB.WithContext(ctx).Create(&user)
+	exception.PanicIfNeeded(result.Error)
 	return user, err
 }
 
