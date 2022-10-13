@@ -22,13 +22,7 @@ func (controller *UserControllerImpl) Register(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	request.Id = uuid.New().String()
 	exception.PanicIfNeeded(err)
-	// controller.UserService.Login(request)
 	response, _ := controller.UserService.Register(request)
-	// if result.Error != nil {
-	// 	return c.Status(400).JSON(fiber.Map{
-	// 		"message": "Email has been taken",
-	// 	})
-	// }
 	return c.JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",
