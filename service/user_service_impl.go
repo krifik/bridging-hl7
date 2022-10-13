@@ -59,7 +59,6 @@ func (service *UserServiceImpl) Login(request model.CreateUserRequest) (response
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-		Token:    "RAHASIA",
 	}
 	return response, err
 }
