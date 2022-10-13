@@ -20,7 +20,7 @@ func (service *UserServiceImpl) FindAll() ([]model.GetUserResponse, error) {
 	var responses []model.GetUserResponse
 	for _, user := range users {
 		responses = append(responses, model.GetUserResponse{
-			Id:       user.Id,
+			Id:       user.ID,
 			Name:     user.Name,
 			Email:    user.Email,
 			Password: user.Password,
@@ -32,7 +32,6 @@ func (service *UserServiceImpl) FindAll() ([]model.GetUserResponse, error) {
 func (service *UserServiceImpl) Register(request model.CreateUserRequest) (response model.CreateUserResponse, err error) {
 	validation.Validate(request)
 	user := entity.User{
-		Id:       request.Id,
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: request.Password,
@@ -40,12 +39,15 @@ func (service *UserServiceImpl) Register(request model.CreateUserRequest) (respo
 
 	result := service.UserRepository.CheckEmail(request)
 	validation.IsEmailHasBeenTaken(result)
-	service.UserRepository.Register(request)
+	user, _ = service.UserRepository.Register(request)
 	response = model.CreateUserResponse{
-		Id:       user.Id,
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
+		Id:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
 	}
 	return response, err
 }
@@ -55,10 +57,13 @@ func (service *UserServiceImpl) Login(request model.CreateUserRequest) (response
 	user, err := service.UserRepository.Login(request)
 
 	response = model.CreateUserResponse{
-		Id:       user.Id,
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
+		// Id:       user.Id,
+		Name:      user.Name,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
 	}
 	return response, err
 }
