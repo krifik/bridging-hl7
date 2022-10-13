@@ -2,9 +2,12 @@ package controller
 
 import (
 	"mangojek-backend/exception"
+	"mangojek-backend/helper"
 	"mangojek-backend/model"
 	"mangojek-backend/service"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -49,9 +52,15 @@ func (controller *UserControllerImpl) Login(c *fiber.Ctx) error {
 			"message": "Wrong credential",
 		})
 	}
-	return c.Status(200).JSON(model.WebResponse{
-		Code:   fiber.StatusOK,
-		Status: "OK",
-		Data:   response,
+
+	claims := jwt.MapClaims{}
+	claims["name"] = response.Name
+	claims["email"] = response.Email
+	claims["expired_at"] = time.Now().Add(3 * time.Minute).Unix()
+	token, err := helper.GenerateJWT(&claims)
+	exception.PanicIfNeeded(err)
+
+	return c.Status(200).JSON(fiber.Map{
+		"token": token,
 	})
 }
