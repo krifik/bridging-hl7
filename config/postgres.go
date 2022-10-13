@@ -38,7 +38,7 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 
 func NewRunMigration(db *gorm.DB) {
 	for _, entity := range RegisterEntities() {
-		err := db.Debug().AutoMigrate(entity.Entity)
+		err := db.AutoMigrate(entity.Entity)
 		if err != nil {
 			log.Fatal(err)
 		}
