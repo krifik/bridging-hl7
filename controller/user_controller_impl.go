@@ -2,13 +2,11 @@ package controller
 
 import (
 	"mangojek-backend/exception"
-	"mangojek-backend/helper"
 	"mangojek-backend/model"
 	"mangojek-backend/service"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	// "github.com/google/uuid"
 )
 
 type UserControllerImpl struct {
@@ -19,11 +17,12 @@ func NewUserControllerImpl(userService service.UserService) UserController {
 	return &UserControllerImpl{UserService: userService}
 }
 
-func (controller *UserControllerImpl) Register(c *fiber.Ctx) error {
+func (controller *UserControllerImpl) Insert(c *fiber.Ctx) error {
 	var request model.CreateUserRequest
 	err := c.BodyParser(&request)
+	// request.Id = uuid.New().String()
 	exception.PanicIfNeeded(err)
-	response, _ := controller.UserService.Register(request)
+	response := controller.UserService.Insert(request)
 	return c.JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",
@@ -37,28 +36,5 @@ func (controller *UserControllerImpl) FindAll(c *fiber.Ctx) error {
 		Code:   fiber.StatusOK,
 		Status: "OK",
 		Data:   responses,
-	})
-}
-
-func (controller *UserControllerImpl) Login(c *fiber.Ctx) error {
-	var request model.CreateUserRequest
-	err := c.BodyParser(&request)
-	exception.PanicIfNeeded(err)
-	response, err := controller.UserService.Login(request)
-	if err != nil {
-		return c.Status(401).JSON(fiber.Map{
-			"message": "Wrong credential",
-		})
-	}
-
-	claims := jwt.MapClaims{}
-	claims["name"] = response.Name
-	claims["email"] = response.Email
-	claims["expired_at"] = time.Now().Add(3 * time.Minute).Unix()
-	token, err := helper.GenerateJWT(&claims)
-	exception.PanicIfNeeded(err)
-
-	return c.Status(200).JSON(fiber.Map{
-		"token": token,
 	})
 }

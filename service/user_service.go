@@ -5,7 +5,7 @@ import (
 )
 
 type UserService interface {
-	Register(request model.CreateUserRequest) (response model.CreateUserResponse, err error)
+	Insert(request model.CreateUserRequest) (response model.CreateUserResponse)
 	FindAll() ([]model.GetUserResponse, error)
-	Login(request model.CreateUserRequest) (response model.CreateUserResponse, err error)
+	// Delete(db *gorm.DB, userId int)
 }

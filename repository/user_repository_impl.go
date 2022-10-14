@@ -5,10 +5,8 @@ import (
 	"mangojek-backend/config"
 	"mangojek-backend/entity"
 	"mangojek-backend/exception"
-	"mangojek-backend/helper"
 	"mangojek-backend/model"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -28,15 +26,16 @@ func (repository *UserRepositoryImpl) FindAll() ([]entity.User, error) {
 	result := repository.DB.WithContext(ctx).Find(&items)
 
 	if result.RowsAffected < 0 {
-		return nil, errors.New("User not found")
+		return nil, errors.New("user not found")
 	}
 	var users []entity.User
 	for _, item := range items {
 		users = append(users, entity.User{
-			// Id:       item.Id,
-			Name:     item.Name,
-			Email:    item.Email,
-			Password: item.Password,
+			Id:        item.Id,
+			FirstName: item.FirstName,
+			LastName:  item.LastName,
+			Email:     item.Email,
+			Password:  item.Password,
 		})
 	}
 	return users, nil
@@ -48,37 +47,15 @@ func (repository *UserRepositoryImpl) Delete(db *gorm.DB, userId int) {
 	result := db.WithContext(ctx).Delete(&userId)
 	exception.PanicIfNeeded(result.Error)
 }
-func (repository *UserRepositoryImpl) Register(request model.CreateUserRequest) (user entity.User, err error) {
+func (repository *UserRepositoryImpl) Insert(request model.CreateUserRequest) (user entity.User) {
 	ctx, cancel := config.NewPostgresContext()
 	defer cancel()
-	request.Password = helper.ToHashedPassword(request.Password)
-	user = entity.User{
-		Name:     request.Name,
-		Email:    request.Email,
-		Password: request.Password,
-	}
-	result := repository.DB.WithContext(ctx).Create(&user)
+	result := repository.DB.WithContext(ctx).Create(&entity.User{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Email:     request.Email,
+		Password:  request.Password,
+	})
 	exception.PanicIfNeeded(result.Error)
-	return user, err
-}
-
-func (repository *UserRepositoryImpl) Login(request model.CreateUserRequest) (user entity.User, err error) {
-	ctx, cancel := config.NewPostgresContext()
-	defer cancel()
-	err = repository.DB.WithContext(ctx).First(&user, "email=?", request.Email).Error
-	if err != nil {
-		return user, err
-	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
-	if err != nil {
-		return user, err
-	}
-	return user, err
-}
-
-func (repository *UserRepositoryImpl) CheckEmail(request model.CreateUserRequest) (result int64) {
-	ctx, cancel := config.NewPostgresContext()
-	defer cancel()
-	result = repository.DB.WithContext(ctx).First(&entity.User{}, "email=?", request.Email).RowsAffected
-	return result
+	return user
 }

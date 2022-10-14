@@ -10,7 +10,8 @@ import (
 func Validate(request model.CreateUserRequest) {
 	err := validation.ValidateStruct(&request,
 		// validation.Field(&request.Id, validation.Required),
-		validation.Field(&request.Name, validation.Required),
+		validation.Field(&request.FirstName, validation.Required),
+		validation.Field(&request.LastName, validation.Required),
 		validation.Field(&request.Email, validation.Required),
 		validation.Field(&request.Password, validation.Required, validation.Length(5, 10)),
 	)
