@@ -67,3 +67,7 @@ func (service *UserServiceImpl) Login(request model.CreateUserRequest) (response
 	}
 	return response, err
 }
+
+func (service *UserServiceImpl) TestRawSQL() {
+	service.UserRepository.TestRawSQL()
+}
