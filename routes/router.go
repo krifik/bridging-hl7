@@ -11,4 +11,5 @@ func Route(app *fiber.App, controller controller.UserController) {
 	app.Get("/api/users", middleware.AuthMiddleware, controller.FindAll)
 	app.Post("/api/register", controller.Register)
 	app.Post("/api/login", controller.Login)
+	app.Post("/api/test", controller.TestRawSQL)
 }
