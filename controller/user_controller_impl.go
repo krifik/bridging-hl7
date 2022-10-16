@@ -9,6 +9,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	// "github.com/google/uuid"
 )
 
 type UserControllerImpl struct {
@@ -19,11 +20,12 @@ func NewUserControllerImpl(userService service.UserService) UserController {
 	return &UserControllerImpl{UserService: userService}
 }
 
-func (controller *UserControllerImpl) Register(c *fiber.Ctx) error {
+func (controller *UserControllerImpl) Insert(c *fiber.Ctx) error {
 	var request model.CreateUserRequest
 	err := c.BodyParser(&request)
+	// request.Id = uuid.New().String()
 	exception.PanicIfNeeded(err)
-	response, _ := controller.UserService.Register(request)
+	response := controller.UserService.Insert(request)
 	return c.JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",
