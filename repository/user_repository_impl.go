@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"mangojek-backend/config"
 	"mangojek-backend/entity"
 	"mangojek-backend/exception"
@@ -81,4 +82,31 @@ func (repository *UserRepositoryImpl) CheckEmail(request model.CreateUserRequest
 	defer cancel()
 	result = repository.DB.WithContext(ctx).First(&entity.User{}, "email=?", request.Email).RowsAffected
 	return result
+}
+func (repository *UserRepositoryImpl) TestRawSQL() {
+	ctx, cancel := config.NewPostgresContext()
+	defer cancel()
+	payload := struct {
+		Name     string
+		Email    string
+		Password string
+	}{
+		Name:     "fikri",
+		Email:    "fikri@gmail.com",
+		Password: "password",
+	}
+	sql := fmt.Sprintf("INSERT INTO users(name,email,password) VALUES('%s', '%s', '%s')", payload.Name, payload.Email, payload.Password)
+	fmt.Println(sql)
+	repository.DB.WithContext(ctx).Create(&entity.User{
+		Name:     "fikri",
+		Email:    "fikri@gmail.com",
+		Password: "password",
+	})
+	// exception.PanicIfNeeded(err)
+	// id, err := result.LastInsertId()
+	// exception.PanicIfNeeded(err)
+	// user := entity.User{
+	// 	ID
+	// }
+	// return result
 }
