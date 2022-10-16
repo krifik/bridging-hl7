@@ -24,7 +24,13 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 	postgresMaxIdleTime, err := strconv.Atoi(configuration.Get("POSTGRES_MAX_IDLE_TIME_SECOND"))
 	exception.PanicIfNeeded(err)
 	dsn := "host=localhost user=postgres password=fikri dbname=mangojek_db port=5432 sslmode=disable TimeZone=Asia/Jakarta"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		// disable log mode
+		// Logger: logger.Default.LogMode(logger.Silent),
+
+		// skip default transaction
+		// SkipDefaultTransaction: true,
+	})
 	exception.PanicIfNeeded(err)
 	sqlDB, err := db.DB()
 
