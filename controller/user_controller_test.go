@@ -48,7 +48,10 @@ func TestUserControllerInsertSuccess(t *testing.T) {
 	json.Unmarshal(jsonData, &createUserResponse)
 	assert.NotNil(t, createUserResponse.Id)
 	assert.Equal(t, createUserRequest.Email, createUserResponse.Email)
+<<<<<<< HEAD
 	// assert.Equal(t, createUserRequest.FirstName, createUserRequest.FirstName)
+=======
+>>>>>>> 16b29b5c3d7e09108329e85929ba6122e42b441c
 	assert.Equal(t, createUserRequest.Name, createUserResponse.Name)
 	assert.Equal(t, createUserRequest.Password, createUserResponse.Password)
 
