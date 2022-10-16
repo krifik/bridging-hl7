@@ -25,21 +25,14 @@ func (repository *UserRepositoryImpl) FindAll() ([]entity.User, error) {
 	ctx, cancel := config.NewPostgresContext()
 	defer cancel()
 
-	var items []entity.User
-	result := repository.DB.WithContext(ctx).Find(&items)
+	var users []entity.User
+	result := repository.DB.WithContext(ctx).Find(&users)
 
 	if result.RowsAffected < 0 {
 		return nil, errors.New("User not found")
 	}
-	var users []entity.User
-	for _, item := range items {
-		users = append(users, entity.User{
-			// Id:       item.Id,
-			Name:     item.Name,
-			Email:    item.Email,
-			Password: item.Password,
-		})
-	}
+	// fmt.Println("repository", items)
+
 	return users, nil
 }
 
