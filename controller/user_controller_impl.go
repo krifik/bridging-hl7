@@ -54,7 +54,7 @@ func (controller *UserControllerImpl) Login(c *fiber.Ctx) error {
 	claims := jwt.MapClaims{}
 	claims["name"] = response.Name
 	claims["email"] = response.Email
-	claims["expired_at"] = time.Now().Add(3 * time.Minute).Unix()
+	claims["expired_at"] = time.Now().Add(60 * time.Minute).Unix()
 	token, err := helper.GenerateJWT(&claims)
 	exception.PanicIfNeeded(err)
 
