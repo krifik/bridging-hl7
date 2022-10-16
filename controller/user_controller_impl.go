@@ -62,3 +62,8 @@ func (controller *UserControllerImpl) Login(c *fiber.Ctx) error {
 		"token": token,
 	})
 }
+func (controller *UserControllerImpl) TestRawSQL(c *fiber.Ctx) error {
+	controller.UserService.TestRawSQL()
+
+	return c.SendString("Berhasil")
+}
