@@ -41,20 +41,10 @@ func (service *UserServiceImpl) Register(request model.CreateUserRequest) (respo
 	validation.IsEmailHasBeenTaken(result)
 	user, _ = service.UserRepository.Register(request)
 	response = model.CreateUserResponse{
-<<<<<<< HEAD
 		Id:       int(user.ID),
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-=======
-		Id:        user.ID,
-		Name:      user.Name,
-		Email:     user.Email,
-		Password:  user.Password,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		DeletedAt: user.DeletedAt,
->>>>>>> 16b29b5c3d7e09108329e85929ba6122e42b441c
 	}
 	return response, err
 }
@@ -65,18 +55,9 @@ func (service *UserServiceImpl) Login(request model.CreateUserRequest) (response
 
 	response = model.CreateUserResponse{
 		// Id:       user.Id,
-<<<<<<< HEAD
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-=======
-		Name:      user.Name,
-		Email:     user.Email,
-		Password:  user.Password,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		DeletedAt: user.DeletedAt,
->>>>>>> 16b29b5c3d7e09108329e85929ba6122e42b441c
 	}
 	return response, err
 }
