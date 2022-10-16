@@ -20,10 +20,13 @@ func (service *UserServiceImpl) FindAll() ([]model.GetUserResponse, error) {
 	var responses []model.GetUserResponse
 	for _, user := range users {
 		responses = append(responses, model.GetUserResponse{
-			Id:       int(user.ID),
-			Name:     user.Name,
-			Email:    user.Email,
-			Password: user.Password,
+			Id:        int(user.ID),
+			Name:      user.Name,
+			Email:     user.Email,
+			Password:  user.Password,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			DeletedAt: user.DeletedAt,
 		})
 	}
 	return responses, nil
