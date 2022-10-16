@@ -13,4 +13,5 @@ type UserRepository interface {
 	Login(model.CreateUserRequest) (user entity.User, err error)
 	Delete(db *gorm.DB, userId int)
 	CheckEmail(request model.CreateUserRequest) (result int64)
+	TestRawSQL()
 }
