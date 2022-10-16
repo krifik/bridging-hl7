@@ -20,12 +20,12 @@ func NewUserControllerImpl(userService service.UserService) UserController {
 	return &UserControllerImpl{UserService: userService}
 }
 
-func (controller *UserControllerImpl) Insert(c *fiber.Ctx) error {
+func (controller *UserControllerImpl) Register(c *fiber.Ctx) error {
 	var request model.CreateUserRequest
 	err := c.BodyParser(&request)
 	// request.Id = uuid.New().String()
 	exception.PanicIfNeeded(err)
-	response := controller.UserService.Insert(request)
+	response, err := controller.UserService.Login(request)
 	return c.JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",

@@ -7,10 +7,9 @@ import (
 
 func ToUserResponse(user entity.User) model.CreateUserRequest {
 	return model.CreateUserRequest{
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Password:  user.Password,
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
 	}
 }
 func ToUserResponses(users []entity.User) []model.CreateUserRequest {

@@ -5,7 +5,7 @@ import (
 )
 
 type UserService interface {
-	Insert(request model.CreateUserRequest) (response model.CreateUserResponse)
+	Register(request model.CreateUserRequest) (response model.CreateUserResponse, err error)
 	FindAll() ([]model.GetUserResponse, error)
 	Login(request model.CreateUserRequest) (response model.CreateUserResponse, err error)
 	TestRawSQL()

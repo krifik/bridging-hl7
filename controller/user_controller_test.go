@@ -26,10 +26,10 @@ func TestUserControllerInsertSuccess(t *testing.T) {
 	app := fiber.New(config.NewFiberConfig())
 	app.Use(recover.New())
 	createUserRequest := model.CreateUserRequest{
-		FirstName: "Test",
-		LastName:  "Test",
-		Email:     "test@email.com",
-		Password:  "test",
+		Name: "Test",
+		// LastName:  "Test",
+		Email:    "test@email.com",
+		Password: "test",
 	}
 
 	requestBody, _ := json.Marshal(createUserRequest)
@@ -48,8 +48,8 @@ func TestUserControllerInsertSuccess(t *testing.T) {
 	json.Unmarshal(jsonData, &createUserResponse)
 	assert.NotNil(t, createUserResponse.Id)
 	assert.Equal(t, createUserRequest.Email, createUserResponse.Email)
-	assert.Equal(t, createUserRequest.FirstName, createUserRequest.FirstName)
-	assert.Equal(t, createUserRequest.LastName, createUserResponse.LastName)
+	// assert.Equal(t, createUserRequest.FirstName, createUserRequest.FirstName)
+	assert.Equal(t, createUserRequest.Name, createUserResponse.Name)
 	assert.Equal(t, createUserRequest.Password, createUserResponse.Password)
 
 }
