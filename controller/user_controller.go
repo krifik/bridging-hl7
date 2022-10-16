@@ -7,5 +7,4 @@ type UserController interface {
 	Register(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
 	TestRawSQL(c *fiber.Ctx) error
-	Insert(c *fiber.Ctx) error
 }

@@ -20,34 +20,52 @@ func (service *UserServiceImpl) FindAll() ([]model.GetUserResponse, error) {
 	var responses []model.GetUserResponse
 	for _, user := range users {
 		responses = append(responses, model.GetUserResponse{
-			Id:        user.Id,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Email:     user.Email,
-			Password:  user.Password,
+			Id:       user.ID,
+			Name:     user.Name,
+			Email:    user.Email,
+			Password: user.Password,
 		})
 	}
 	return responses, nil
 }
 
-func (service *UserServiceImpl) Insert(request model.CreateUserRequest) (response model.CreateUserResponse) {
+func (service *UserServiceImpl) Register(request model.CreateUserRequest) (response model.CreateUserResponse, err error) {
 	validation.Validate(request)
 	user := entity.User{
-		FirstName: request.FirstName,
-		LastName:  request.LastName,
-		Email:     request.Email,
-		Password:  request.Password,
+		Name:     request.Name,
+		Email:    request.Email,
+		Password: request.Password,
 	}
 
-	service.UserRepository.Insert(request)
+	result := service.UserRepository.CheckEmail(request)
+	validation.IsEmailHasBeenTaken(result)
+	user, _ = service.UserRepository.Register(request)
 	response = model.CreateUserResponse{
-		Id:        user.Id,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
+		Id:        user.ID,
+		Name:      user.Name,
 		Email:     user.Email,
 		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
 	}
-	return response
+	return response, err
+}
+
+func (service *UserServiceImpl) Login(request model.CreateUserRequest) (response model.CreateUserResponse, err error) {
+	validation.AuthValidate(request)
+	user, err := service.UserRepository.Login(request)
+
+	response = model.CreateUserResponse{
+		// Id:       user.Id,
+		Name:      user.Name,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
+	}
+	return response, err
 }
 
 func (service *UserServiceImpl) TestRawSQL() {

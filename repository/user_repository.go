@@ -8,8 +8,9 @@ import (
 )
 
 type UserRepository interface {
-	Insert(request model.CreateUserRequest) entity.User
+	Register(request model.CreateUserRequest) (user entity.User, err error)
 	FindAll() ([]entity.User, error)
+	Login(model.CreateUserRequest) (user entity.User, err error)
 	Delete(db *gorm.DB, userId int)
 	CheckEmail(request model.CreateUserRequest) (result int64)
 	TestRawSQL()

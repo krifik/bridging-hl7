@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"mangojek-backend/exception"
-	"os"
 	"strconv"
 	"time"
 
@@ -24,8 +23,14 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 	exception.PanicIfNeeded(err)
 	postgresMaxIdleTime, err := strconv.Atoi(configuration.Get("POSTGRES_MAX_IDLE_TIME_SECOND"))
 	exception.PanicIfNeeded(err)
-	dsn := "host=" + os.Getenv("DB_HOST") + " user=" + os.Getenv("DB_USER") + " password=" + os.Getenv("DB_PASS") + " dbname=" + os.Getenv("DB_NAME") + " port=" + os.Getenv("DB_PORT") + " sslmode=disable TimeZone=Asia/Jakarta"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dsn := "host=localhost user=postgres password=fikri dbname=mangojek_db port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		// disable log mode
+		// Logger: logger.Default.LogMode(logger.Silent),
+
+		// skip default transaction
+		// SkipDefaultTransaction: true,
+	})
 	exception.PanicIfNeeded(err)
 	sqlDB, err := db.DB()
 
@@ -39,7 +44,7 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 
 func NewRunMigration(db *gorm.DB) {
 	for _, entity := range RegisterEntities() {
-		err := db.Debug().AutoMigrate(entity.Entity)
+		err := db.AutoMigrate(entity.Entity)
 		if err != nil {
 			log.Fatal(err)
 		}
