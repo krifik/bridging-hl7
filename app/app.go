@@ -8,6 +8,7 @@ import (
 	"mangojek-backend/service"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
@@ -28,7 +29,9 @@ func InitializedApp() *fiber.App {
 	// Setup Fiber
 	// app := fiber.New(config.NewFiberConfig())
 	app := fiber.New(config.NewFiberConfig())
-	app.Use(recover.New())
+	app.Use(recover.New(), cors.New(cors.Config{
+		AllowOrigins: "*",
+	}))
 
 	// Setup Routing
 	routes.Route(app, userController)
