@@ -23,7 +23,7 @@ func (controller *UserControllerImpl) Register(c *fiber.Ctx) error {
 	var request model.CreateUserRequest
 	err := c.BodyParser(&request)
 	exception.PanicIfNeeded(err)
-	response, err := controller.UserService.Login(request)
+	response, err := controller.UserService.Register(request)
 	return c.JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",
