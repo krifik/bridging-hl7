@@ -63,6 +63,7 @@ func InitializeDB() {
 			Name: "db:seed",
 			Action: func(cli *cli.Context) error {
 				// seeding function
+				config.NewRunSeed(database)
 				fmt.Println("================ seeded successfully ================")
 				return nil
 			},

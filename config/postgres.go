@@ -51,6 +51,18 @@ func NewRunMigration(db *gorm.DB) {
 		}
 	}
 }
+
+func NewRunSeed(db *gorm.DB) error {
+	for _, entity := range RegisterSeeder(db) {
+		err := db.Debug().Create(entity.Seeder).Error
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
 func NewPostgresContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), 10*time.Second)
 }
