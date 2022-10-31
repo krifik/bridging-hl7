@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"mangojek-backend/config"
-	"mangojek-backend/controller"
-	"mangojek-backend/repository"
+	"mangojek-backend/module"
 	"mangojek-backend/routes"
-	"mangojek-backend/service"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,25 +18,16 @@ func InitializedApp() *fiber.App {
 	configuration := config.NewConfiguration()
 	database := config.NewPostgresDatabase(configuration)
 	config.NewRunMigration(database)
-
-	// Setup Repository
-	userRepository := repository.NewUserRepositoryImpl(database)
-
-	// Setup Service
-	userService := service.NewUserServiceImpl(userRepository)
-
-	// Setup Controller
-	userController := controller.NewUserControllerImpl(userService)
-
+	userController := module.NewUserModule(database)
+	productController := module.NewProductModule(database)
 	// Setup Fiber
 	// app := fiber.New(config.NewFiberConfig())
 	app := fiber.New(config.NewFiberConfig())
 	app.Use(recover.New(), cors.New(cors.Config{
 		AllowOrigins: "*",
 	}))
-
 	// Setup Routing
-	routes.Route(app, userController)
+	routes.Route(app, userController, productController)
 	return app
 
 }
