@@ -45,7 +45,7 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 
 func NewRunMigration(db *gorm.DB) {
 	for _, entity := range RegisterEntities() {
-		err := db.AutoMigrate(entity.Entity)
+		err := db.Debug().AutoMigrate(entity.Entity)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,6 +53,8 @@ func NewRunMigration(db *gorm.DB) {
 }
 
 func NewRunSeed(db *gorm.DB) error {
+	// product := db.Create(faker.ProductFaker(db))
+	// pp.Print(product)
 	for _, entity := range RegisterSeeder(db) {
 		err := db.Debug().Create(entity.Seeder).Error
 		if err != nil {
