@@ -10,11 +10,11 @@ import (
 
 type Product struct {
 	ID             int           `gorm:"primaryKey,not null,autoIncrement;uniqueIndex"`
-	CategoryId     sql.NullInt64 `gorm:"unique"`
+	CategoryId     sql.NullInt64 `gorm:"index"`
 	Category       Category      `gorm:"foreignKey:CategoryId;references:ID;"`
-	PartnerId      sql.NullInt64 `gorm:"unique"`
+	PartnerId      sql.NullInt64 `gorm:"index"`
 	Partner        Partner       `gorm:"foreignKey:PartnerId;references:ID;"`
-	ProductImageId sql.NullInt64 `gorm:"unique"`
+	ProductImageId sql.NullInt64 `gorm:"index"`
 	ProductImage   ProductImage  `gorm:"foreignKey:ProductImageId;references:ID;"`
 	Name           string        `gorm:"size:256;not null"`
 	Desc           string        `gorm:"size:256;not null"`
