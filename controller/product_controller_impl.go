@@ -39,8 +39,7 @@ func (controller *ProductControllerImpl) Save(c *fiber.Ctx) error {
 	err := c.BodyParser(&request)
 	exception.PanicIfNeeded(err)
 	// pp.Print(request)
-	controller.ProductService.Save(request)
-	var response model.CreateProductResponse
+	response := controller.ProductService.Save(request)
 	return c.Status(200).JSON(model.WebResponse{
 		Code:   200,
 		Status: "OK",
