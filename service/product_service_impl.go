@@ -25,11 +25,11 @@ func (service *ProductServiceImpl) GetProduct(id int) model.GetProductResponse {
 		CreatedAt:      product.CreatedAt,
 		UpdatedAt:      product.UpdatedAt,
 		DeletedAt:      product.DeletedAt,
-		ProductImageId: int(product.ProductImageId.Int64),
+		ProductImageId: product.ProductImageId,
 		ProductImage:   product.ProductImage,
-		CategoryId:     int(product.CategoryId.Int64),
+		CategoryId:     product.CategoryId,
 		Category:       product.Category,
-		PartnerId:      int(product.PartnerId.Int64),
+		PartnerId:      product.PartnerId,
 		Partner:        product.Partner,
 	}
 
@@ -50,11 +50,11 @@ func (service *ProductServiceImpl) GetProducts() []model.GetProductResponse {
 			CreatedAt:      product.CreatedAt,
 			UpdatedAt:      product.UpdatedAt,
 			DeletedAt:      product.DeletedAt,
-			ProductImageId: int(product.ProductImageId.Int64),
+			ProductImageId: product.ProductImageId,
 			ProductImage:   product.ProductImage,
-			CategoryId:     int(product.CategoryId.Int64),
+			CategoryId:     product.CategoryId,
 			Category:       product.Category,
-			PartnerId:      int(product.PartnerId.Int64),
+			PartnerId:      product.PartnerId,
 			Partner:        product.Partner,
 		})
 	}
@@ -73,11 +73,11 @@ func (service *ProductServiceImpl) Save(request model.CreateProductRequest) mode
 		CreatedAt:      product.CreatedAt,
 		UpdatedAt:      product.UpdatedAt,
 		DeletedAt:      product.DeletedAt,
-		ProductImageId: int(product.ProductImageId.Int64),
+		ProductImageId: product.ProductImageId,
 		// ProductImage:   product.ProductImage,
-		CategoryId: int(product.CategoryId.Int64),
+		CategoryId: product.CategoryId,
 		// Category:       product.Category,
-		PartnerId: int(product.PartnerId.Int64),
+		PartnerId: product.PartnerId,
 		// Partner:        product.Partner,
 	}
 	return response
