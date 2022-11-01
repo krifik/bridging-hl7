@@ -1,12 +1,12 @@
 package repository
 
 import (
-	"database/sql"
 	"mangojek-backend/config"
 	"mangojek-backend/entity"
 	"mangojek-backend/exception"
 	"mangojek-backend/model"
 
+	"github.com/k0kubun/pp"
 	"gorm.io/gorm"
 )
 
@@ -41,18 +41,12 @@ func (repository *ProductRepositoryImpl) Save(request model.CreateProductRequest
 	ctx, cancel := config.NewPostgresContext()
 	defer cancel()
 	product := entity.Product{
-		ID: request.ID,
-		ProductImageId: sql.NullInt64{
-			Int64: int64(request.ProductImageId),
-		},
+		ID:             request.ID,
+		ProductImageId: request.ProductImageId,
 		// ProductImage:   request.ProductImage,
-		CategoryId: sql.NullInt64{
-			Int64: int64(request.CategoryId),
-		},
+		CategoryId: request.CategoryId,
 		// Category:       request.Category,
-		PartnerId: sql.NullInt64{
-			Int64: int64(request.PartnerId),
-		},
+		PartnerId: request.PartnerId,
 		// Partner:   request.Partner,
 		Name:      request.Name,
 		Desc:      request.Desc,
@@ -62,6 +56,7 @@ func (repository *ProductRepositoryImpl) Save(request model.CreateProductRequest
 		UpdatedAt: request.UpdatedAt,
 		DeletedAt: request.DeletedAt,
 	}
+	pp.Print(product.PartnerId)
 
 	repository.DB.WithContext(ctx).Omit("Partner", "Category", "ProductImage").Create(&product)
 	return product
