@@ -7,8 +7,8 @@ import (
 )
 
 type Partner struct {
-	ID        int `gorm:"primaryKey,not null,autoIncrement;uniqueIndex"`
-	ProductId int `gorm:"index"`
+	ID int `gorm:"primaryKey,not null,autoIncrement;uniqueIndex"`
+	// ProductId int `gorm:"index"`
 	// Product   []Product     `gorm:"foreignKey:ID;references:ProductId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Location  string `gorm:"size:100"`
 	Name      string `gorm:"size:100"`
