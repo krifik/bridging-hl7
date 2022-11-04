@@ -17,7 +17,6 @@ import (
 func InitializedApp() *fiber.App {
 	configuration := config.NewConfiguration()
 	database := config.NewPostgresDatabase(configuration)
-	config.NewRunMigration(database)
 	userController := module.NewUserModule(database)
 	productController := module.NewProductModule(database)
 	// Setup Fiber
