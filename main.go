@@ -1,32 +1,60 @@
 package main
 
 import (
-	"flag"
-	"mangojek-backend/app"
-	_ "mangojek-backend/docs"
-	"mangojek-backend/exception"
+	"bridging-hl7/app"
+	"bridging-hl7/bot"
+	"bridging-hl7/config"
+	_ "bridging-hl7/docs"
+	"bridging-hl7/exception"
+	"bridging-hl7/model"
+	"bridging-hl7/rabbitmq"
+	"bridging-hl7/watcher"
+	"os"
+	"sync"
+
+	"github.com/joho/godotenv"
+	"github.com/k0kubun/pp"
 )
 
-// @title Mangojek API Docs
-// @version 1.0
-// @description This is an auto-generated API Docs.
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
-// @contact.email your@mail.com
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-// @BasePath /api
+var globalConsumer chan model.JSONRequest
+
 func main() {
-	flag.Parse()
-	if arg := flag.Arg(0); arg != "" {
-		app.InitializeDB()
-		return
+
+	errEnv := godotenv.Load()
+	var wg sync.WaitGroup
+	port := os.Getenv("PORT")
+	host := os.Getenv("HOST")
+	url := host + ":" + port
+
+	wg.Add(1)
+	go func() {
+		watcher.StartWatcher()
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		bot.StartBot()
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		ch, conn := config.InitializedRabbitMQ()
+		rabbitmq.StartConsumer(ch, conn)
+		wg.Done()
+	}()
+	if errEnv != nil {
+		pp.Print(errEnv)
 	}
+
+	// addr := host + ":" + port
 	app := app.InitializedApp()
 	// Start App
-	err := app.Listen(":2000")
-	exception.PanicIfNeeded(err)
+	go func() {
+		err := app.Listen(url)
+		exception.PanicIfNeeded(err)
+	}()
+	wg.Wait()
+
 }

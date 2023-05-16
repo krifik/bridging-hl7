@@ -1,9 +1,8 @@
 package config
 
 import (
+	"bridging-hl7/exception"
 	"context"
-	"log"
-	"mangojek-backend/exception"
 	"os"
 	"strconv"
 	"time"
@@ -41,28 +40,6 @@ func NewPostgresDatabase(configuration Config) *gorm.DB {
 	sqlDB.SetConnMaxLifetime(time.Duration(postgresMaxIdleTime) * time.Second)
 
 	return db
-}
-
-func NewRunMigration(db *gorm.DB) {
-	for _, entity := range RegisterEntities() {
-		err := db.Debug().AutoMigrate(entity.Entity)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
-func NewRunSeed(db *gorm.DB) error {
-	// product := db.Create(faker.ProductFaker(db))
-	// pp.Print(product)
-	for _, entity := range RegisterSeeder(db) {
-		err := db.Debug().Create(entity.Seeder).Error
-		if err != nil {
-			return err
-		}
-
-	}
-	return nil
 }
 
 func NewPostgresContext() (context.Context, context.CancelFunc) {

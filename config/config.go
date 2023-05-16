@@ -1,7 +1,7 @@
 package config
 
 import (
-	"mangojek-backend/exception"
+	"bridging-hl7/exception"
 	"os"
 
 	"github.com/joho/godotenv"

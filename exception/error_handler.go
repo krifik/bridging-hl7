@@ -1,7 +1,7 @@
 package exception
 
 import (
-	"mangojek-backend/model"
+	"bridging-hl7/model"
 
 	"github.com/gofiber/fiber/v2"
 )
