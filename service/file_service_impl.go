@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bridging-hl7/exception"
 	"bridging-hl7/model"
 	"bridging-hl7/repository"
 	"bridging-hl7/utils"
@@ -12,7 +13,6 @@ import (
 	helper "bridging-hl7/helper"
 
 	"github.com/joho/godotenv"
-	"github.com/k0kubun/pp"
 )
 
 // import from consumer.go
@@ -99,7 +99,9 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	} else {
 		file.Obr.Ptype = "ptype=" + "IP"
 	}
-	file.Obr.BirthDt = "birth_dt=" + request.Response.Demographics.Patient.DateOfBirth
+	bd, err := time.Parse("2006-01-02", request.Response.Demographics.Patient.DateOfBirth)
+	exception.SendLogIfErorr(err, "103")
+	file.Obr.BirthDt = "birth_dt=" + bd.Format("200601021504")
 	if request.Response.Demographics.Patient.Gender == "MALE" {
 		file.Obr.Sex = "sex=" + "1"
 	} else {
@@ -112,7 +114,9 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 		utils.SendMessage("LINE 109\n" + " Log Type: Error\n" + "Error: \n" + err.Error() + "\n")
 	}
 	file.Obr.RequestDt = "request_dt=" + rd.Format("200601021504")
-	file.Obr.SpecimenDt = "speciment_dt=" + request.Response.Demographics.CollectDate
+	sd, err := time.Parse("2006-01-02T15:04:05.000Z", request.Response.Demographics.CollectDate)
+	exception.SendLogIfErorr(err, "117")
+	file.Obr.SpecimenDt = "speciment_dt=" + sd.Format("200601021504")
 	file.Obr.Source = "source=" + request.Response.Demographics.SourceName + "|" + request.Response.Demographics.SourceID
 	file.Obr.Clinician = "clinician=" + request.Response.Demographics.DoctorName + "|" + request.Response.Demographics.DoctorID
 	if request.Response.Demographics.IsCyto {
@@ -128,7 +132,6 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	var obxs []model.OBX
 
 	for _, value := range request.Response.Examinations {
-		// pp.Println(value)
 		for _, panel := range value.Children {
 			if len(panel.Children) > 0 {
 				for _, test := range panel.Children {
@@ -136,14 +139,15 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 					if panel.PanelID == 0 {
 						testStr = panel.TestName + "|" + panel.TestName
 					} else {
-						panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(test.PanelID))
+						panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(panel.PanelID))
 						if panelRes == nil {
 							testStr = panel.TestName + "|" + panel.TestName
 						} else {
 							testStr = panelRes.TestName + "|" + panel.TestName
 						}
 					}
-					testStr += "|" + test.TestName + "|" + test.ExamValue + "|" + test.UnitName + "|" + test.NormalValueText + "|" + test.ExamValueFlag + "|" + test.ValidatedBy
+					aliasName := helper.GetAliasName(test.ValidatedBy)
+					testStr += "|" + test.TestName + "|" + test.ExamValue + "|" + test.UnitName + "|" + test.NormalValueText + "|" + test.ExamValueFlag + "|" + aliasName + "^" + test.ValidatedBy + "|" + "ALL^ALL" + "|" + panel.Comment
 					obxs = append(obxs, model.OBX{Item: testStr})
 				}
 			} else {
@@ -152,14 +156,23 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 					testStr = panel.TestName + "|" + panel.TestName
 				} else {
 					panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(panel.PanelID))
-					pp.Print(panelRes)
+
 					if panelRes == nil {
 						testStr = panel.TestName + "|" + panel.TestName
 					} else {
 						testStr = panelRes.TestName + "|" + panel.TestName
 					}
 				}
-				testStr += "|" + panel.TestName + "|" + panel.ExamValue + "|" + panel.UnitName + "|" + panel.NormalValueText + "|" + panel.ExamValueFlag + "|" + panel.ValidatedBy
+				var aliasName string
+				var sep string
+				if panel.ValidatedBy == "" {
+					aliasName = ""
+					sep = ""
+				} else {
+					aliasName = helper.GetAliasName(panel.ValidatedBy)
+					sep = "^"
+				}
+				testStr += "|" + panel.TestName + "|" + panel.ExamValue + "|" + panel.UnitName + "|" + panel.NormalValueText + "|" + panel.ExamValueFlag + "|" + aliasName + sep + panel.ValidatedBy + "|" + "ALL^ALL" + "|" + panel.Comment
 				obxs = append(obxs, model.OBX{Item: testStr})
 			}
 		}
