@@ -37,10 +37,12 @@ func (f *FileServiceImpl) GetContentFile(url string) model.Json {
 		utils.SendMessage("LINE 36\n" + "Log Type: Error\n" + "Error: \n" + err.Error() + "\n")
 	}
 	// pp.Print(os.Getenv("ORDERDIR"))
-	// fileName := "LAB-20230504-00001.txt"
-	// dir := os.Getenv("ORDERDIR")
+	if os.Getenv("APP_MODE") == "DEBUG" {
+		fileName := "LAB-20230504-00001.txt"
+		dir := os.Getenv("ORDERDIR")
+		url = dir + "/" + fileName
+	}
 	// file, fileError := os.OpenFile(dir+"/"+fileName, os.O_RDONLY, 0644)
-	pp.Print(url)
 	fileContent := helper.GetContent(url)
 	json := utils.TransformToRightJson(fileContent)
 
@@ -66,7 +68,7 @@ func (f *FileServiceImpl) GetFiles() []string {
 	return results
 }
 func (f *FileServiceImpl) SearchFile() string {
-	return "asd"
+	return ""
 }
 
 // CreateFileResult creates a new file result.
@@ -77,7 +79,6 @@ func (f *FileServiceImpl) SearchFile() string {
 func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, error) {
 	var file model.FileResult
 	rand.Seed(time.Now().UnixNano())
-	pp.Print(request)
 	// Generate a random integer between 0 and 999999
 	num := rand.Intn(999999)
 	file.Msh.MessageDT = "message_dt=" + time.Now().Format("200601021504")
@@ -127,16 +128,38 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	var obxs []model.OBX
 
 	for _, value := range request.Response.Examinations {
+		// pp.Println(value)
 		for _, panel := range value.Children {
 			if len(panel.Children) > 0 {
 				for _, test := range panel.Children {
-					testStr := panel.TestName
-					testStr += "|" + test.TestName + "|" + "NM" + "|" + test.ExamValue + "|" + test.UnitName + "|" + test.NormalValueText + "|" + test.ExamValueFlag + "|" + test.ValidatedBy
+					var testStr string
+					if panel.PanelID == 0 {
+						testStr = panel.TestName + "|" + panel.TestName
+					} else {
+						panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(test.PanelID))
+						if panelRes == nil {
+							testStr = panel.TestName + "|" + panel.TestName
+						} else {
+							testStr = panelRes.TestName + "|" + panel.TestName
+						}
+					}
+					testStr += "|" + test.TestName + "|" + test.ExamValue + "|" + test.UnitName + "|" + test.NormalValueText + "|" + test.ExamValueFlag + "|" + test.ValidatedBy
 					obxs = append(obxs, model.OBX{Item: testStr})
 				}
 			} else {
-				testStr := panel.TestName
-				testStr += "|" + panel.TestName + "|" + "NM" + "|" + panel.ExamValue + "|" + panel.UnitName + "|" + panel.NormalValueText + "|" + panel.ExamValueFlag + "|" + panel.ValidatedBy
+				var testStr string
+				if panel.PanelID == 0 {
+					testStr = panel.TestName + "|" + panel.TestName
+				} else {
+					panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(panel.PanelID))
+					pp.Print(panelRes)
+					if panelRes == nil {
+						testStr = panel.TestName + "|" + panel.TestName
+					} else {
+						testStr = panelRes.TestName + "|" + panel.TestName
+					}
+				}
+				testStr += "|" + panel.TestName + "|" + panel.ExamValue + "|" + panel.UnitName + "|" + panel.NormalValueText + "|" + panel.ExamValueFlag + "|" + panel.ValidatedBy
 				obxs = append(obxs, model.OBX{Item: testStr})
 			}
 		}
