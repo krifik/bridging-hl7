@@ -85,8 +85,10 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.Diagnosa = item.(string)
 		}
 		if index == "pstatus" {
-			rightJson.Penjamin = item.(string)
-			rightJson.IdPenjamin = item.(string)
+			penjamin := strings.Split(item.(string), "|")[0]
+			idPenjamin := strings.Split(item.(string), "|")[1]
+			rightJson.Penjamin = penjamin
+			rightJson.IdPenjamin = idPenjamin
 			rightJson.JenisPasien = "ASURANSI"
 			rightJson.IdJenisPasien = "2"
 
@@ -154,7 +156,13 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			}
 
 		}
+		if index == "order_control" {
+			if item.(string) == "CA" {
+				resultOrders = make([]model.Order, 0)
+			}
+		}
 	}
+
 	rightJson.Order = resultOrders
 	rightJson.DetailRujukan = detailRujukan
 	return rightJson
