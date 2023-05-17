@@ -60,6 +60,7 @@ type Examinations struct {
 	Position   string     `json:"position"`
 	TestName   string     `json:"testName"`
 	ExternalID string     `json:"externalId"`
+	Type       string     `json:"type"`
 	Children   []Children `json:"children"`
 }
 
@@ -70,6 +71,8 @@ type Children struct {
 	ParentID        int        `json:"parentId"`
 	Position        string     `json:"position"`
 	TestName        string     `json:"testName"`
+	Type            string     `json:"type"`
+	PanelID         int        `json:"panelId"`
 	ExamValue       string     `json:"examValue"`
 	ExamValueType   string     `json:"examValueType"`
 	ExamValueFlag   string     `json:"examValueFlag"`
