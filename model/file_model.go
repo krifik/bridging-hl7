@@ -85,6 +85,7 @@ type Children struct {
 	ValidatedBy     string     `json:"validatedBy"`
 	Comment         string     `json:"comment"`
 	Decimal         int        `json:"decimal"`
+	Metode          string     `json:"metode"`
 	Children        []Children `json:"children"`
 }
 
