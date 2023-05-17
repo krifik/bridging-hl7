@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"bridging-hl7/model"
 	"bridging-hl7/utils"
 	"bufio"
 	"fmt"
@@ -144,4 +145,21 @@ func GetStructValues(s interface{}) []string {
 	}
 
 	return values
+}
+
+func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) *model.Children {
+	for _, exam := range exams {
+		if len(exam.Children) > 0 {
+			for _, child := range exam.Children {
+				if child.TestID == targetPanelID {
+					return &child
+				} else if len(child.Children) > 0 {
+					if result := SearchExaminationsByPanelID([]model.Examinations{{Children: child.Children}}, targetPanelID); result != nil {
+						return result
+					}
+				}
+			}
+		}
+	}
+	return nil
 }
