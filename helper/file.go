@@ -147,6 +147,16 @@ func GetStructValues(s interface{}) []string {
 	return values
 }
 
+func GetAliasName(name string) string {
+	words := strings.Split(name, " ")
+	var aliasNameSlice []string
+	for _, w := range words {
+		aliasNameSlice = append(aliasNameSlice, string(w[0]))
+	}
+	aliasName := strings.Join(aliasNameSlice, "")
+	return aliasName
+}
+
 func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) *model.Children {
 	for _, exam := range exams {
 		if len(exam.Children) > 0 {
