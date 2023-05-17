@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"bridging-hl7/model"
 	"strings"
+
+	"girhub.com/krifik/bridging-hl7/model"
 )
 
 /*

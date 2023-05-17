@@ -1,12 +1,14 @@
 package rabbitmq
 
 import (
-	"bridging-hl7/exception"
-	"bridging-hl7/model"
-	"bridging-hl7/module"
 	"encoding/json"
 	"log"
 
+	"girhub.com/krifik/bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/model"
+	"girhub.com/krifik/bridging-hl7/module"
+
+	"github.com/k0kubun/pp"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -57,7 +59,8 @@ func StartConsumer(ch *amqp.Channel, conn *amqp.Connection) {
 			err := json.Unmarshal(message.Body, &request)
 			exception.SendLogIfErorr(err, "57")
 			fileService.CreateFileResult(request)
-			log.Printf(" > Received message: %s\n", message.Body)
+			log.Println("> Received message: ")
+			pp.Println(message.Body)
 		}
 	}()
 	<-forever

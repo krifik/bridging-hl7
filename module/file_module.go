@@ -1,16 +1,14 @@
 package module
 
 import (
-	"bridging-hl7/controller"
-	"bridging-hl7/repository"
-	"bridging-hl7/service"
-
-	"gorm.io/gorm"
+	"girhub.com/krifik/bridging-hl7/controller"
+	"girhub.com/krifik/bridging-hl7/repository"
+	"girhub.com/krifik/bridging-hl7/service"
 )
 
 var fileRepository = repository.NewFileRepositoryImpl()
 
-func NewFileModule(database *gorm.DB) controller.FileController {
+func NewFileModule() controller.FileController {
 	// Setup Repository
 
 	// Setup Service

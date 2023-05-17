@@ -1,9 +1,6 @@
 package watcher
 
 import (
-	"bridging-hl7/module"
-	"bridging-hl7/service"
-	"bridging-hl7/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,6 +9,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"girhub.com/krifik/bridging-hl7/module"
+	"girhub.com/krifik/bridging-hl7/service"
+	"girhub.com/krifik/bridging-hl7/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gofiber/fiber/v2"

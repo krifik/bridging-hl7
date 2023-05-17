@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"bridging-hl7/model"
-	"bridging-hl7/service"
-	"bridging-hl7/utils"
+	"girhub.com/krifik/bridging-hl7/model"
+	"girhub.com/krifik/bridging-hl7/service"
+	"girhub.com/krifik/bridging-hl7/utils"
 
 	"github.com/gofiber/fiber/v2"
 )

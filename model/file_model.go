@@ -50,8 +50,12 @@ type MetaData struct {
 }
 
 type JSONRequest struct {
-	Response Response `json:"response"`
+	Data Data `json:"data"`
+}
+
+type Data struct {
 	MetaData MetaData `json:"metaData"`
+	Response Response `json:"response"`
 }
 
 type Examinations struct {

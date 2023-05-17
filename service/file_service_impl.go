@@ -1,16 +1,17 @@
 package service
 
 import (
-	"bridging-hl7/exception"
-	"bridging-hl7/model"
-	"bridging-hl7/repository"
-	"bridging-hl7/utils"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
-	helper "bridging-hl7/helper"
+	"girhub.com/krifik/bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/model"
+	"girhub.com/krifik/bridging-hl7/repository"
+	"girhub.com/krifik/bridging-hl7/utils"
+
+	helper "girhub.com/krifik/bridging-hl7/helper"
 
 	"github.com/joho/godotenv"
 )
@@ -87,51 +88,51 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	file.Msh.MessageID = "message_id=" + "TDR-3000" + str
 	file.Msh.Version = "version=" + "2.3"
 	file.Obr.Type = "[OBR]"
-	file.Obr.PID = "pid=" + request.Response.Demographics.Patient.MRN
+	file.Obr.PID = "pid=" + request.Data.Response.Demographics.Patient.MRN
 	file.Obr.Apid = "apid=" + ""
-	file.Obr.Pname = "pname=" + request.Response.Demographics.Patient.FullName
-	file.Obr.Pidentityno = "pidentityno=" + request.Response.Demographics.Patient.IDNumber
-	file.Obr.Pmobileno = "pmobileno=" + request.Response.Demographics.Patient.PhoneNumber
-	file.Obr.Street = "street=" + request.Response.Demographics.Patient.Address
+	file.Obr.Pname = "pname=" + request.Data.Response.Demographics.Patient.FullName
+	file.Obr.Pidentityno = "pidentityno=" + request.Data.Response.Demographics.Patient.IDNumber
+	file.Obr.Pmobileno = "pmobileno=" + request.Data.Response.Demographics.Patient.PhoneNumber
+	file.Obr.Street = "street=" + request.Data.Response.Demographics.Patient.Address
 	file.Obr.Title = "title=" + ""
-	if request.Response.Demographics.SourceType == "OUTPATIENT" {
+	if request.Data.Response.Demographics.SourceType == "OUTPATIENT" {
 		file.Obr.Ptype = "ptype=" + "OP"
 	} else {
 		file.Obr.Ptype = "ptype=" + "IP"
 	}
-	bd, err := time.Parse("2006-01-02", request.Response.Demographics.Patient.DateOfBirth)
+	bd, err := time.Parse("2006-01-02", request.Data.Response.Demographics.Patient.DateOfBirth)
 	exception.SendLogIfErorr(err, "103")
 	file.Obr.BirthDt = "birth_dt=" + bd.Format("200601021504")
-	if request.Response.Demographics.Patient.Gender == "MALE" {
+	if request.Data.Response.Demographics.Patient.Gender == "MALE" {
 		file.Obr.Sex = "sex=" + "1"
 	} else {
 		file.Obr.Sex = "sex=" + "2"
 	}
-	file.Obr.Ono = "ono=" + request.Response.NoOrder
-	file.Obr.Lno = "lno=" + request.Response.Demographics.RegNumber
-	rd, err := time.Parse("2006-01-02T15:04:05.000Z", request.Response.Demographics.RegistrationDate)
+	file.Obr.Ono = "ono=" + request.Data.Response.NoOrder
+	file.Obr.Lno = "lno=" + request.Data.Response.Demographics.RegNumber
+	rd, err := time.Parse("2006-01-02T15:04:05.000Z", request.Data.Response.Demographics.RegistrationDate)
 	if err != nil {
 		utils.SendMessage("LINE 109\n" + " Log Type: Error\n" + "Error: \n" + err.Error() + "\n")
 	}
 	file.Obr.RequestDt = "request_dt=" + rd.Format("200601021504")
-	sd, err := time.Parse("2006-01-02T15:04:05.000Z", request.Response.Demographics.CollectDate)
+	sd, err := time.Parse("2006-01-02T15:04:05.000Z", request.Data.Response.Demographics.CollectDate)
 	exception.SendLogIfErorr(err, "117")
 	file.Obr.SpecimenDt = "speciment_dt=" + sd.Format("200601021504")
-	file.Obr.Source = "source=" + request.Response.Demographics.SourceName + "|" + request.Response.Demographics.SourceID
-	file.Obr.Clinician = "clinician=" + request.Response.Demographics.DoctorName + "|" + request.Response.Demographics.DoctorID
-	if request.Response.Demographics.IsCyto {
+	file.Obr.Source = "source=" + request.Data.Response.Demographics.SourceName + "|" + request.Data.Response.Demographics.SourceID
+	file.Obr.Clinician = "clinician=" + request.Data.Response.Demographics.DoctorName + "|" + request.Data.Response.Demographics.DoctorID
+	if request.Data.Response.Demographics.IsCyto {
 		file.Obr.Priority = "priority=CITO"
 	} else {
 		file.Obr.Priority = "priority=NON CITO"
 	}
-	file.Obr.Pstatus = "pstatus=" + request.Response.Demographics.PartnerName + "|" + request.Response.Demographics.PartnerID
-	file.Obr.Visitno = "visitno=" + request.Response.Demographics.VisitNumber
-	file.Obr.OrderTestID = "order_test_id=" + request.Response.Demographics.OrderTestID
-	file.Obr.Comment = "comment=" + request.Response.Demographics.Diagnose
-	onoFileName := request.Response.NoOrder
+	file.Obr.Pstatus = "pstatus=" + request.Data.Response.Demographics.PartnerName + "|" + request.Data.Response.Demographics.PartnerID
+	file.Obr.Visitno = "visitno=" + request.Data.Response.Demographics.VisitNumber
+	file.Obr.OrderTestID = "order_test_id=" + request.Data.Response.Demographics.OrderTestID
+	file.Obr.Comment = "comment=" + request.Data.Response.Demographics.Diagnose
+	onoFileName := request.Data.Response.NoOrder
 	var obxs []model.OBX
 
-	for _, value := range request.Response.Examinations {
+	for _, value := range request.Data.Response.Examinations {
 		for _, panel := range value.Children {
 			if len(panel.Children) > 0 {
 				for _, test := range panel.Children {
@@ -139,7 +140,7 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 					if panel.PanelID == 0 {
 						testStr = panel.TestName + "|" + panel.TestName
 					} else {
-						panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(panel.PanelID))
+						panelRes := helper.SearchExaminationsByPanelID(request.Data.Response.Examinations, int(panel.PanelID))
 						if panelRes == nil {
 							testStr = panel.TestName + "|" + panel.TestName
 						} else {
@@ -155,7 +156,7 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 				if panel.PanelID == 0 {
 					testStr = panel.TestName + "|" + panel.TestName
 				} else {
-					panelRes := helper.SearchExaminationsByPanelID(request.Response.Examinations, int(panel.PanelID))
+					panelRes := helper.SearchExaminationsByPanelID(request.Data.Response.Examinations, int(panel.PanelID))
 
 					if panelRes == nil {
 						testStr = panel.TestName + "|" + panel.TestName

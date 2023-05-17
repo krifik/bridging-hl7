@@ -1,9 +1,9 @@
 package app
 
 import (
-	"bridging-hl7/config"
-	"bridging-hl7/module"
-	"bridging-hl7/routes"
+	"girhub.com/krifik/bridging-hl7/config"
+	"girhub.com/krifik/bridging-hl7/module"
+	"girhub.com/krifik/bridging-hl7/routes"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -16,10 +16,10 @@ func InitializedApp() *fiber.App {
 		AllowOrigins: "*",
 	}))
 
-	db := config.InitializedSqlite()
+	// db := config.InitializedSqlite()
 
 	// Setup Routing
-	fileController := module.NewFileModule(db)
+	fileController := module.NewFileModule()
 	routes.Route(app, fileController)
 	return app
 

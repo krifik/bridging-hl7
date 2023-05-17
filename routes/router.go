@@ -1,14 +1,15 @@
 package routes
 
 import (
-	"bridging-hl7/controller"
-	_ "bridging-hl7/docs"
-	"bridging-hl7/exception"
-	"bridging-hl7/model"
 	"context"
 	"encoding/json"
 	"os"
 	"time"
+
+	"girhub.com/krifik/bridging-hl7/controller"
+	_ "girhub.com/krifik/bridging-hl7/docs"
+	"girhub.com/krifik/bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/model"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"

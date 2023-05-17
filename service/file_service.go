@@ -1,6 +1,6 @@
 package service
 
-import "bridging-hl7/model"
+import "girhub.com/krifik/bridging-hl7/model"
 
 type FileService interface {
 	GetContentFile(url string) model.Json

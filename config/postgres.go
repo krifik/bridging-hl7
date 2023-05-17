@@ -1,11 +1,12 @@
 package config
 
 import (
-	"bridging-hl7/exception"
 	"context"
 	"os"
 	"strconv"
 	"time"
+
+	"girhub.com/krifik/bridging-hl7/exception"
 
 	"github.com/jackc/pgx/v5"
 	"gorm.io/driver/postgres"

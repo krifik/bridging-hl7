@@ -1,4 +1,4 @@
-module bridging-hl7
+module girhub.com/krifik/bridging-hl7
 
 go 1.19
 
@@ -13,7 +13,6 @@ require (
 	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/swaggo/swag v1.8.7
 	gorm.io/driver/postgres v1.4.4
-	gorm.io/driver/sqlite v1.5.0
 	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
 )
 
@@ -41,7 +40,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
-	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect

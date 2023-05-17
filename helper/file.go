@@ -1,8 +1,6 @@
 package helper
 
 import (
-	"bridging-hl7/model"
-	"bridging-hl7/utils"
 	"bufio"
 	"fmt"
 	"log"
@@ -11,6 +9,9 @@ import (
 	"reflect"
 	"strings"
 	"unicode"
+
+	"girhub.com/krifik/bridging-hl7/model"
+	"girhub.com/krifik/bridging-hl7/utils"
 
 	"github.com/joho/godotenv"
 )

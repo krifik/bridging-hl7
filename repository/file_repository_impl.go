@@ -1,9 +1,10 @@
 package repository
 
 import (
-	"bridging-hl7/entity"
-	"bridging-hl7/model"
 	"time"
+
+	"girhub.com/krifik/bridging-hl7/entity"
+	"girhub.com/krifik/bridging-hl7/model"
 
 	amdqp "github.com/rabbitmq/amqp091-go"
 	"gorm.io/gorm"

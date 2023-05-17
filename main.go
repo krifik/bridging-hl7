@@ -1,16 +1,17 @@
 package main
 
 import (
-	"bridging-hl7/app"
-	"bridging-hl7/bot"
-	"bridging-hl7/config"
-	_ "bridging-hl7/docs"
-	"bridging-hl7/exception"
-	"bridging-hl7/model"
-	"bridging-hl7/rabbitmq"
-	"bridging-hl7/watcher"
 	"os"
 	"sync"
+
+	"girhub.com/krifik/bridging-hl7/app"
+	"girhub.com/krifik/bridging-hl7/bot"
+	"girhub.com/krifik/bridging-hl7/config"
+	_ "girhub.com/krifik/bridging-hl7/docs"
+	"girhub.com/krifik/bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/model"
+	"girhub.com/krifik/bridging-hl7/rabbitmq"
+	"girhub.com/krifik/bridging-hl7/watcher"
 
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp"

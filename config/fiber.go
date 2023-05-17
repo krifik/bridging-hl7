@@ -1,7 +1,7 @@
 package config
 
 import (
-	"bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/exception"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,8 +1,9 @@
 package config
 
 import (
-	"bridging-hl7/exception"
 	"os"
+
+	"girhub.com/krifik/bridging-hl7/exception"
 
 	"github.com/joho/godotenv"
 )

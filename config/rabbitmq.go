@@ -1,9 +1,10 @@
 package config
 
 import (
-	"bridging-hl7/exception"
 	"log"
 	"os"
+
+	"girhub.com/krifik/bridging-hl7/exception"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"

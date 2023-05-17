@@ -1,12 +1,13 @@
 package rabbitmq
 
 import (
-	"bridging-hl7/config"
-	"bridging-hl7/exception"
-	"bridging-hl7/model"
 	"context"
 	"encoding/json"
 	"time"
+
+	"girhub.com/krifik/bridging-hl7/config"
+	"girhub.com/krifik/bridging-hl7/exception"
+	"girhub.com/krifik/bridging-hl7/model"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
