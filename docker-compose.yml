@@ -1,20 +1,33 @@
 version: "3"
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "5673:5673"
-      - "15673:15673"
-  app:
-    image: golang:latest
+  hl7:
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    container_name: hl7
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "4100:2000"
     environment:
-      - AMQP_URL=rabbitmq
+      #   - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5673/
+      - AMQP_URL=amqp://guest:guest@rabbitmq:5672/
     env_file:
       - .env
     volumes:
-      - /home/fikri/programming/work/applimetis/medqlabv2/brdiging-hl7:/app
-      - /home/fikri/Documents/hl7/orders:/app/hl7/orders
-    depends_on:
-      - rabbitmq
+      - /home/fikri/Documents/hl7/result-staging/:/app/results/
+      - /home/fikri/Documents/hl7/orders/:/app/orders/
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
