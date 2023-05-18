@@ -1,6 +1,6 @@
 package exception
 
-import "girhub.com/krifik/bridging-hl7/utils"
+import "github.com/krifik/bridging-hl7/utils"
 
 func PanicIfNeeded(err interface{}) {
 	if err != nil {

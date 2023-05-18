@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/config"
-	"girhub.com/krifik/bridging-hl7/exception"
-	"girhub.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/config"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/model"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )

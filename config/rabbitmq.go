@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"girhub.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/exception"
 
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -17,7 +17,7 @@ func InitializedRabbitMQ() (*amqp.Channel, *amqp.Connection) {
 	log.Println("Initializing RabbitMQ . . .")
 	log.Println("URL : " + url)
 	conn, err := amqp.Dial(url)
-	exception.PanicIfNeeded(err)
+
 	exception.SendLogIfErorr(err, "17")
 	ch, err := conn.Channel()
 	exception.SendLogIfErorr(err, "20")

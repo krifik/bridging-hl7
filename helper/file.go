@@ -10,8 +10,8 @@ import (
 	"strings"
 	"unicode"
 
-	"girhub.com/krifik/bridging-hl7/model"
-	"girhub.com/krifik/bridging-hl7/utils"
+	"github.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/utils"
 
 	"github.com/joho/godotenv"
 )

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/helper"
-	"girhub.com/krifik/bridging-hl7/utils"
+	"github.com/krifik/bridging-hl7/helper"
+	"github.com/krifik/bridging-hl7/utils"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"

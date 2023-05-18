@@ -1,7 +1,7 @@
 package exception
 
 import (
-	"girhub.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/model"
 
 	"github.com/gofiber/fiber/v2"
 )

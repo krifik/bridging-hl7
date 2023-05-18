@@ -10,9 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/module"
-	"girhub.com/krifik/bridging-hl7/service"
-	"girhub.com/krifik/bridging-hl7/utils"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/module"
+	"github.com/krifik/bridging-hl7/service"
+	"github.com/krifik/bridging-hl7/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gofiber/fiber/v2"
@@ -31,8 +32,9 @@ import (
 func StartWatcher() {
 	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
+
 	// create a new watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -72,9 +74,7 @@ func StartWatcher() {
 						utils.SendMessage("LINE 62\n" + " Log Type: Error\n" + "Error: \n" + err.Error() + "\n")
 					}
 					b, err := json.MarshalIndent(fileContent, "", "    ")
-					if err != nil {
-						panic(err)
-					}
+					exception.SendLogIfErorr(err, "75")
 					utils.SendMessage("SENT JSON" + string(b))
 
 					errsStr := strings.Join(slices[:], "\n")
@@ -107,11 +107,13 @@ func StartWatcher() {
 		}
 	}()
 	dir := os.Getenv("ORDERDIR")
-	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	log.Println(dir)
+	errFilePath := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			watcher.Add(path)
 		}
 		return nil
 	})
+	exception.SendLogIfErorr(errFilePath, "110")
 	<-done
 }

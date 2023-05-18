@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/exception"
-	"girhub.com/krifik/bridging-hl7/model"
-	"girhub.com/krifik/bridging-hl7/repository"
-	"girhub.com/krifik/bridging-hl7/utils"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/repository"
+	"github.com/krifik/bridging-hl7/utils"
 
-	helper "girhub.com/krifik/bridging-hl7/helper"
+	helper "github.com/krifik/bridging-hl7/helper"
 
 	"github.com/joho/godotenv"
 )

@@ -3,8 +3,8 @@ package repository
 import (
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/entity"
-	"girhub.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/entity"
+	"github.com/krifik/bridging-hl7/model"
 
 	amdqp "github.com/rabbitmq/amqp091-go"
 	"gorm.io/gorm"

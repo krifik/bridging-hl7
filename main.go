@@ -4,14 +4,14 @@ import (
 	"os"
 	"sync"
 
-	"girhub.com/krifik/bridging-hl7/app"
-	"girhub.com/krifik/bridging-hl7/bot"
-	"girhub.com/krifik/bridging-hl7/config"
-	_ "girhub.com/krifik/bridging-hl7/docs"
-	"girhub.com/krifik/bridging-hl7/exception"
-	"girhub.com/krifik/bridging-hl7/model"
-	"girhub.com/krifik/bridging-hl7/rabbitmq"
-	"girhub.com/krifik/bridging-hl7/watcher"
+	"github.com/krifik/bridging-hl7/app"
+	"github.com/krifik/bridging-hl7/bot"
+	"github.com/krifik/bridging-hl7/config"
+	_ "github.com/krifik/bridging-hl7/docs"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/rabbitmq"
+	"github.com/krifik/bridging-hl7/watcher"
 
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp"
@@ -29,12 +29,6 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		watcher.StartWatcher()
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	go func() {
 		bot.StartBot()
 		wg.Done()
 	}()
@@ -43,6 +37,11 @@ func main() {
 	go func() {
 		ch, conn := config.InitializedRabbitMQ()
 		rabbitmq.StartConsumer(ch, conn)
+		wg.Done()
+	}()
+	wg.Add(1)
+	go func() {
+		watcher.StartWatcher()
 		wg.Done()
 	}()
 	if errEnv != nil {

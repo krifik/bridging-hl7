@@ -1,9 +1,9 @@
 package module
 
 import (
-	"girhub.com/krifik/bridging-hl7/controller"
-	"girhub.com/krifik/bridging-hl7/repository"
-	"girhub.com/krifik/bridging-hl7/service"
+	"github.com/krifik/bridging-hl7/controller"
+	"github.com/krifik/bridging-hl7/repository"
+	"github.com/krifik/bridging-hl7/service"
 )
 
 var fileRepository = repository.NewFileRepositoryImpl()

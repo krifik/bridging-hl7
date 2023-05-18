@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"girhub.com/krifik/bridging-hl7/controller"
-	_ "girhub.com/krifik/bridging-hl7/docs"
-	"girhub.com/krifik/bridging-hl7/exception"
-	"girhub.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/controller"
+	_ "github.com/krifik/bridging-hl7/docs"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/model"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"

@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"girhub.com/krifik/bridging-hl7/entity"
-	"girhub.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/entity"
+	"github.com/krifik/bridging-hl7/model"
 )
 
 type FileRepository interface {

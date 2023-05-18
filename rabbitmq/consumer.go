@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"log"
 
-	"girhub.com/krifik/bridging-hl7/exception"
-	"girhub.com/krifik/bridging-hl7/model"
-	"girhub.com/krifik/bridging-hl7/module"
+	"github.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/model"
+	"github.com/krifik/bridging-hl7/module"
 
 	"github.com/k0kubun/pp"
 	amqp "github.com/rabbitmq/amqp091-go"

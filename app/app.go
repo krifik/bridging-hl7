@@ -1,9 +1,9 @@
 package app
 
 import (
-	"girhub.com/krifik/bridging-hl7/config"
-	"girhub.com/krifik/bridging-hl7/module"
-	"girhub.com/krifik/bridging-hl7/routes"
+	"github.com/krifik/bridging-hl7/config"
+	"github.com/krifik/bridging-hl7/module"
+	"github.com/krifik/bridging-hl7/routes"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

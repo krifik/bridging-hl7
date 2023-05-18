@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"girhub.com/krifik/bridging-hl7/exception"
+	"github.com/krifik/bridging-hl7/exception"
 
 	"github.com/joho/godotenv"
 )

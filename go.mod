@@ -1,4 +1,4 @@
-module girhub.com/krifik/bridging-hl7
+module github.com/krifik/bridging-hl7
 
 go 1.19
 
