@@ -65,18 +65,24 @@ TELEGRAM_API_TOKEN
 a token that generated from Botfather on Telegram
 
 GROUPCHAT_ID
+
 an id that can be obtained from access telegram api
+
 API_EXTERNAL
+
 a url to medqlab backend service
 example : ip:port/endpoint_order
 
 RESULTDIR
+
 an absolute path that contains result file from KESIA(HIS)
 
 ORDERDIR
+
 an absolute path that contains order file from KESIA(HIS)
 
 HOST
+
 an ip address for this service
 example: 0.0.0.0
 
@@ -85,7 +91,9 @@ a port for this service
 example: 2000
 
 AMQP_URL
+
 an url for connect service to rabbitmq
+
 APP_MODE
 status for app mode, the value MUSH be PROD
 set to DEBUG, just for test only
