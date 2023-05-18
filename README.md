@@ -62,6 +62,7 @@ or, just exec docker-compose up and turu!
 
 # ENV DOC
 ```TELEGRAM_API_TOKEN```
+
 a token that generated from Botfather on Telegram
 
 ```GROUPCHAT_ID```
@@ -87,6 +88,7 @@ an ip address for this service
 example: 0.0.0.0
 
 ```PORT```
+
 a port for this service
 example: 2000
 
