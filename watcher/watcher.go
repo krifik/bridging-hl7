@@ -63,7 +63,9 @@ func StartWatcher() {
 
 					fileService := module.UseService()
 					fileContent := service.FileService.GetContentFile(fileService, event.Name)
-					a.JSON(fileContent)
+					if fileContent.NoOrder != "" {
+						a.JSON(fileContent)
+					}
 					var data interface{}
 					code, _, errs := a.Struct(&data) // ...
 					var slices []string
@@ -80,7 +82,7 @@ func StartWatcher() {
 					errsStr := strings.Join(slices[:], "\n")
 					utils.SendMessage(time.Now().Format("02-01-2006 15:04:05") + " \n\nLog Type: Info \n\n" + "API Request Message : \n\n" + "Code " + strconv.Itoa(code) + " 👍")
 					if len(errs) > 0 {
-						utils.SendMessage("LINE 73\n" + "Log Type: Error\n\n" + "Error: \n" + errsStr + "\n")
+						utils.SendMessage("LINE 73 \nAPI KE MEDQLAB SERVICE ERROR\n" + "Log Type: Error\n\n" + "Error: \n" + errsStr + "\n")
 					}
 
 					// NOTE: in case in the future use a rabbitmq instead REST
