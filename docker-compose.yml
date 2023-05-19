@@ -18,7 +18,7 @@ services:
     volumes:
       - /home/fikri/Documents/hl7/result-staging/:/app/results/
       - /home/fikri/Documents/hl7/orders/:/app/orders/
-
+    restart: always
   rabbitmq:
     hostname: rabbitmq
     image: "rabbitmq:3-management"
@@ -31,3 +31,4 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
+    restart: always
