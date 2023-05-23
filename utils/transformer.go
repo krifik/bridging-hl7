@@ -155,12 +155,16 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 				}
 				resultOrders = append(resultOrders, modelOrder)
 			}
-
 		}
 		if index == "order_control" {
 			if item.(string) == "CA" {
 				resultOrders = make([]model.Order, 0)
 			}
+		}
+		if index == "pob" {
+			rightJson.OrderJson.TempatLahir = item.(string)
+		} else {
+			rightJson.OrderJson.TempatLahir = "-"
 		}
 	}
 
