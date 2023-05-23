@@ -182,8 +182,8 @@ func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) 
 	}
 	return nil
 }
-func GetContentSftpFile(url string, client *sftp.Client) model.Json {
-	file, fileError := client.Open(url)
+func GetContentSftpFile(fileName string, client *sftp.Client) model.Json {
+	file, fileError := client.Open(os.Getenv("SFTP_ORDER_DIR") + "/" + fileName)
 	var text = make([]byte, 1024)
 	if fileError != nil {
 		utils.SendMessage("LINE 26\n" + "Log Type: Error\n" + "Error: \n" + fileError.Error() + "\n")
@@ -218,11 +218,11 @@ func GetContentSftpFile(url string, client *sftp.Client) model.Json {
 func SendToAPI(fileContent model.Json) {
 	var client fiber.Client
 	a := client.Post(os.Getenv("API_EXTERNAL"))
-	if fileContent.NoOrder != "" {
+	if fileContent.OrderJson.NoOrder != "" {
 		a.ContentType("application/json")
-		pp.Println("FILE CONTENT" + fileContent.NoOrder)
+		pp.Println("FILE CONTENT" + fileContent.OrderJson.NoOrder)
 		a.JSON(fileContent)
-		pp.Println("SENDING DATA WITH ORDER NUMBER : " + fileContent.NoOrder)
+		pp.Println("SENDING DATA WITH ORDER NUMBER : " + fileContent.OrderJson.NoOrder)
 		var data interface{}
 		code, _, errs := a.Struct(&data) // ...
 		var slices []string
@@ -254,6 +254,7 @@ func SendJsonToRabbitMQ(request model.Json) error {
 		ContentType: "application/json",
 		Body:        jsonData,
 	}
+	// pp.Println(request)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	defer ch.Close()

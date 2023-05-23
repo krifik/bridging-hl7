@@ -63,7 +63,7 @@ func StartWatcher() {
 
 					fileService := module.UseService()
 					fileContent := service.FileService.GetContentFile(fileService, event.Name)
-					if fileContent.NoOrder != "" {
+					if fileContent.OrderJson.NoOrder != "" {
 						a.JSON(fileContent)
 					}
 					var data interface{}
@@ -88,7 +88,7 @@ func StartWatcher() {
 					// NOTE: in case in the future use a rabbitmq instead REST
 					// fileService := module.UseService()
 					// fileContent := service.FileService.GetContentFile(fileService, event.Name)
-					// err := rabbitmq.SendJsonToRabbitMQ(fileContent)
+					// err = rabbitmq.SendJsonToRabbitMQ(fileContent)
 					// exception.SendLogIfErorr(err, "80")
 				}
 				if event.Op&fsnotify.Write == fsnotify.Write {

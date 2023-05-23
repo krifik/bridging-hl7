@@ -8,7 +8,6 @@ import (
 	"github.com/krifik/bridging-hl7/model"
 	"github.com/krifik/bridging-hl7/module"
 
-	"github.com/k0kubun/pp"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -60,7 +59,7 @@ func StartConsumer(ch *amqp.Channel, conn *amqp.Connection) {
 			exception.SendLogIfErorr(err, "57")
 			fileService.CreateFileResult(request)
 			log.Print("> Received message: ")
-			pp.Print(request.Data.Response.Demographics.NoOrder)
+			// pp.Print(request.Data.Response.Demographics.NoOrder)
 		}
 	}()
 	<-forever

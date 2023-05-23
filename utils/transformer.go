@@ -20,22 +20,22 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 	for index, item := range data {
 
 		if index == "pid" {
-			rightJson.NoRm = item.(string)
+			rightJson.OrderJson.NoRm = item.(string)
 		}
 		if index == "pname" {
-			rightJson.NamaPasien = item.(string)
+			rightJson.OrderJson.NamaPasien = item.(string)
 		}
 		if index == "pidentityno" {
-			rightJson.Nik = item.(string)
+			rightJson.OrderJson.Nik = item.(string)
 		}
 		if index == "pmobileno" {
-			rightJson.Phone = item.(string)
+			rightJson.OrderJson.Phone = item.(string)
 		}
 		if index == "street" {
-			rightJson.Alamat = item.(string)
+			rightJson.OrderJson.Alamat = item.(string)
 		}
 		if index == "ptype" {
-			rightJson.RujukanAsal = "1"
+			rightJson.OrderJson.RujukanAsal = "1"
 		}
 		if index == "birth_dt" {
 			year := item.(string)[0:4]
@@ -44,21 +44,21 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			hour := item.(string)[8:10]
 			minute := item.(string)[10:12]
 			fullDate := year + "-" + month + "-" + date + " " + hour + ":" + minute
-			rightJson.TglLahir = fullDate
+			rightJson.OrderJson.TglLahir = fullDate
 		}
 		if index == "sex" {
 			if item == 1 {
-				rightJson.Jk = "P"
+				rightJson.OrderJson.Jk = "P"
 			} else {
-				rightJson.Jk = "L"
+				rightJson.OrderJson.Jk = "L"
 			}
 		}
 
 		if index == "ono" {
-			rightJson.NoOrder = item.(string)
+			rightJson.OrderJson.NoOrder = item.(string)
 		}
 		if index == "lno" {
-			rightJson.NoPendaftaran = ""
+			rightJson.OrderJson.NoPendaftaran = ""
 		}
 
 		//! dont know this is  necessary for bridging or not, for now, i just commented it LOL
@@ -77,25 +77,25 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 
 		if index == "priority" {
 			if item.(string) == "CITO" {
-				rightJson.Cito = "true"
+				rightJson.OrderJson.Cito = "true"
 			} else {
-				rightJson.Cito = "false"
+				rightJson.OrderJson.Cito = "false"
 			}
 		}
 		if index == "comment" {
-			rightJson.Diagnosa = item.(string)
+			rightJson.OrderJson.Diagnosa = item.(string)
 		}
 		if index == "pstatus" {
 			penjamin := strings.Split(item.(string), "|")[0]
 			idPenjamin := strings.Split(item.(string), "|")[1]
-			rightJson.Penjamin = penjamin
-			rightJson.IdPenjamin = idPenjamin
-			rightJson.JenisPasien = "ASURANSI"
-			rightJson.IdJenisPasien = "2"
+			rightJson.OrderJson.Penjamin = penjamin
+			rightJson.OrderJson.IdPenjamin = idPenjamin
+			rightJson.OrderJson.JenisPasien = "ASURANSI"
+			rightJson.OrderJson.IdJenisPasien = "2"
 
 		} else {
-			rightJson.JenisPasien = "UMUM"
-			rightJson.IdJenisPasien = "1"
+			rightJson.OrderJson.JenisPasien = "UMUM"
+			rightJson.OrderJson.IdJenisPasien = "1"
 		}
 
 		if index == "source" {
@@ -115,7 +115,7 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			}
 		}
 		if index == "visitno" {
-			rightJson.NoPendaftaran = item.(string)
+			rightJson.OrderJson.NoPendaftaran = item.(string)
 		}
 		if index == "clinician" {
 			dokter := strings.Split(item.(string), "|")[0]
@@ -164,8 +164,8 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 		}
 	}
 
-	rightJson.Order = resultOrders
-	rightJson.DetailRujukan = detailRujukan
+	rightJson.OrderJson.Order = resultOrders
+	rightJson.OrderJson.DetailRujukan = detailRujukan
 	return rightJson
 
 }

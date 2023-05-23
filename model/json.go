@@ -1,6 +1,6 @@
 package model
 
-type Json struct {
+type OrderJson struct {
 	NoPendaftaran string    `json:"no_pendaftaran"`
 	NoRm          string    `json:"no_rm"`
 	NoOrder       string    `json:"no_order"`
@@ -22,4 +22,9 @@ type Json struct {
 	Diagnosa      string    `json:"diagnose"`
 	Icd10         []Icd10   `json:"icd10"`
 	Order         []Order   `json:"order"`
+}
+
+type Json struct {
+	Pattern   string    `json:"bridging_order"`
+	OrderJson OrderJson `json:"data"`
 }
