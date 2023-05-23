@@ -166,6 +166,7 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 
 	rightJson.OrderJson.Order = resultOrders
 	rightJson.OrderJson.DetailRujukan = detailRujukan
+	rightJson.Pattern = "bridging_order"
 	return rightJson
 
 }
