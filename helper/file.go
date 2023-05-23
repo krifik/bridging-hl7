@@ -2,6 +2,7 @@ package helper
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,16 +10,18 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp"
+	"github.com/krifik/bridging-hl7/config"
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/model"
 	"github.com/krifik/bridging-hl7/utils"
 	"github.com/pkg/sftp"
-
-	"github.com/joho/godotenv"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // GetContent returns a map of key-value pairs parsed from a file at the given URL.
@@ -237,4 +240,34 @@ func SendToAPI(fileContent model.Json) {
 			utils.SendMessage("LINE 73 \nAPI KE MEDQLAB SERVICE ERROR\n" + "Log Type: Error\n\n" + "Error: \n" + errsStr + "\n")
 		}
 	}
+}
+
+func SendJsonToRabbitMQ(request model.Json) error {
+
+	ch, conn := config.InitializedRabbitMQ()
+	defer ch.Close()
+	defer conn.Close()
+
+	jsonData, errJson := json.Marshal(request)
+	exception.SendLogIfErorr(errJson, "22")
+	message := amqp.Publishing{
+		ContentType: "application/json",
+		Body:        jsonData,
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	defer ch.Close()
+	// Attempt to publish a message to the queue.
+	if err := ch.PublishWithContext(
+		ctx,
+		"",               // exchange
+		"bridging_order", // queue name
+		false,            // mandatory
+		false,            // immediate
+		message,          // message to publish
+	); err != nil {
+		return err
+	}
+
+	return nil
 }
