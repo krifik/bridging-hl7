@@ -3,7 +3,6 @@ package sftp
 import (
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/knownhosts"
 )
 
 // type SFTPClient struct {
@@ -79,12 +77,12 @@ func Watcher() {
 	config := &ssh.ClientConfig{
 		User: os.Getenv("SFTP_USER"),
 		Auth: []ssh.AuthMethod{
-			// ssh.Password(os.Getenv("SFTP_PASSWORD")),
-			interactiveSSHAuthMethod(os.Getenv("SFTP_PASSWORD")),
+			ssh.Password(os.Getenv("SFTP_PASSWORD")),
+			// interactiveSSHAuthMethod(os.Getenv("SFTP_PASSWORD")),
 		},
-		HostKeyCallback: hostKeyCallback,
-		// HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout: 30 * time.Second,
+		// HostKeyCallback: hostKeyCallback,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Timeout:         30 * time.Second,
 	}
 	conn, err := ssh.Dial("tcp", os.Getenv("SFTP_URL"), config)
 	if err != nil {
@@ -119,7 +117,7 @@ func Watcher() {
 				fileContent := helper.GetContentSftpFile(file.Name(), sftpClient)
 				// Update the last known modification time
 				// helper.SendToAPI(fileContent)
-				pp.Println(fileContent)
+				// pp.Println(fileContent)
 				errPublish := helper.SendJsonToRabbitMQ(fileContent)
 				exception.SendLogIfErorr(errPublish, "122")
 				lastModified = file.ModTime()
@@ -130,49 +128,4 @@ func Watcher() {
 		// Sleep for a duration before checking again
 		time.Sleep(time.Second * 2) // Adjust the duration as needed
 	}
-}
-func hostKeyCallback(hostname string, remote net.Addr, key ssh.PublicKey) error {
-	file, errFile := os.Create(os.Getenv("HOME") + "/.ssh/known_hosts")
-	exception.SendLogIfErorr(errFile, "36")
-	defer file.Close()
-	hostKeyCallback, err := knownhosts.New(os.Getenv("HOME") + "/.ssh/known_hosts")
-	if err != nil {
-		return err
-	}
-
-	// Check if the key is already in the known_hosts file
-	if err := hostKeyCallback(hostname, remote, key); err == nil {
-		// Key is already known, accept it
-		return nil
-	}
-
-	// Key is not yet known, ask the user if they want to add it
-	// fmt.Printf("The authenticity of host '%s' can't be established.\n", hostname)
-	// fmt.Printf("Key fingerprint is %s.\n", ssh.FingerprintSHA256(key))
-	// log.Print("Do you want to add this host to your known hosts file? (yes/no) ")
-	// var answer string
-	// if _, err := fmt.Scanln(&answer); err != nil {
-	// 	return err
-	// }
-	// if answer != "yes" {
-	// 	return fmt.Errorf("host key verification failed")
-	// }
-
-	// Add the key to the known_hosts file
-	f, err := os.OpenFile(os.Getenv("HOME")+"/.ssh/known_hosts", os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if _, err := f.WriteString(hostname + "\t" + remote.String() + "\n"); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func interactiveSSHAuthMethod(password string) ssh.AuthMethod {
-	return ssh.PasswordCallback(func() (string, error) {
-		return password, nil
-	})
 }
