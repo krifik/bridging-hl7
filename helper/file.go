@@ -2,6 +2,7 @@ package helper
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -10,8 +11,12 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/k0kubun/pp"
+	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/model"
 	"github.com/krifik/bridging-hl7/utils"
+	"github.com/pkg/sftp"
 
 	"github.com/joho/godotenv"
 )
@@ -82,7 +87,7 @@ func RemoveAlphabet(str string) string {
 	return filteredStr.String()
 }
 
-func WriteLineByLine(data []string, fileName string) error {
+func WriteLineByLine(data []string, fileName string) (*os.File, string, error) {
 	err := godotenv.Load()
 	if err != nil {
 		utils.SendMessage("LINE 86 \nLog Type: Error\n" + "Error: \n" + err.Error() + "\n")
@@ -111,7 +116,7 @@ func WriteLineByLine(data []string, fileName string) error {
 	if err != nil {
 		panic(err)
 	}
-	return nil
+	return file, fileName, nil
 }
 
 func GetStructValues(s interface{}) []string {
@@ -173,4 +178,63 @@ func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) 
 		}
 	}
 	return nil
+}
+func GetContentSftpFile(url string, client *sftp.Client) model.Json {
+	file, fileError := client.Open(url)
+	var text = make([]byte, 1024)
+	if fileError != nil {
+		utils.SendMessage("LINE 26\n" + "Log Type: Error\n" + "Error: \n" + fileError.Error() + "\n")
+	}
+	defer file.Close()
+	file.Read(text)
+	str := strings.NewReader(string(text))
+	r := bufio.NewReader(str)
+
+	var results = make(map[string]interface{})
+
+	for {
+		token, _, err := r.ReadLine()
+		if len(token) > 0 {
+			splittedStr := strings.Split(string(token), "=")
+			if len(splittedStr) == 2 {
+				if splittedStr[1] != "" && splittedStr[0] != "" {
+					key := splittedStr[0]
+					val := splittedStr[1]
+					results[key] = val
+				}
+			}
+		}
+
+		if err != nil {
+			break
+		}
+	}
+	json := utils.TransformToRightJson(results)
+	return json
+}
+func SendToAPI(fileContent model.Json) {
+	var client fiber.Client
+	a := client.Post(os.Getenv("API_EXTERNAL"))
+	if fileContent.NoOrder != "" {
+		a.ContentType("application/json")
+		pp.Println("FILE CONTENT" + fileContent.NoOrder)
+		a.JSON(fileContent)
+		pp.Println("SENDING DATA WITH ORDER NUMBER : " + fileContent.NoOrder)
+		var data interface{}
+		code, _, errs := a.Struct(&data) // ...
+		var slices []string
+		for _, v := range errs {
+			slices = append(slices, v.Error())
+		}
+		pp.Println(code)
+		_, err := json.MarshalIndent(fileContent, "", "    ")
+		exception.SendLogIfErorr(err, "75")
+		// utils.SendMessage("SENT JSON" + string(b))
+
+		errsStr := strings.Join(slices[:], "\n")
+		// utils.SendMessage(time.Now().Format("02-01-2006 15:04:05") + " \n\nLog Type: Info \n\n" + "API Request Message : \n\n" + "Code " + strconv.Itoa(code) + " 👍")
+		if len(errs) > 0 {
+			utils.SendMessage("LINE 73 \nAPI KE MEDQLAB SERVICE ERROR\n" + "Log Type: Error\n\n" + "Error: \n" + errsStr + "\n")
+		}
+	}
 }
