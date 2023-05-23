@@ -10,6 +10,7 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/helper"
+
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 )
@@ -117,7 +118,9 @@ func Watcher() {
 				pp.Println("New file detected:", file.Name())
 				fileContent := helper.GetContentSftpFile(file.Name(), sftpClient)
 				// Update the last known modification time
-				helper.SendToAPI(fileContent)
+				// helper.SendToAPI(fileContent)
+				errPublish := helper.SendJsonToRabbitMQ(fileContent)
+				exception.SendLogIfErorr(errPublish, "122")
 				lastModified = file.ModTime()
 
 			}
