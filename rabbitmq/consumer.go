@@ -20,12 +20,12 @@ func StartConsumer(ch *amqp.Channel, conn *amqp.Connection) {
 	defer conn.Close()
 	log.Println("Starting Consumer")
 	q, err := ch.QueueDeclare(
-		"coba", // name
-		true,   // durable
-		false,  // delete when unused
-		false,  // exclusive
-		false,  // no-wait
-		nil,    // arguments
+		"bridging_result", // name
+		true,              // durable
+		false,             // delete when unused
+		false,             // exclusive
+		false,             // no-wait
+		nil,               // arguments
 	)
 	exception.SendLogIfErorr(err, "20")
 
@@ -59,8 +59,8 @@ func StartConsumer(ch *amqp.Channel, conn *amqp.Connection) {
 			err := json.Unmarshal(message.Body, &request)
 			exception.SendLogIfErorr(err, "57")
 			fileService.CreateFileResult(request)
-			log.Println("> Received message: ")
-			pp.Println(message.Body)
+			log.Print("> Received message: ")
+			pp.Print(request.Data.Response.Demographics.NoOrder)
 		}
 	}()
 	<-forever
