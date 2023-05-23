@@ -4,24 +4,23 @@ import (
 	"os"
 	"sync"
 
+	"github.com/joho/godotenv"
+	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/app"
 	"github.com/krifik/bridging-hl7/bot"
 	"github.com/krifik/bridging-hl7/config"
 	_ "github.com/krifik/bridging-hl7/docs"
 	"github.com/krifik/bridging-hl7/exception"
-	"github.com/krifik/bridging-hl7/model"
 	"github.com/krifik/bridging-hl7/rabbitmq"
-	"github.com/krifik/bridging-hl7/watcher"
-
-	"github.com/joho/godotenv"
-	"github.com/k0kubun/pp"
+	"github.com/krifik/bridging-hl7/sftp"
 )
-
-var globalConsumer chan model.JSONRequest
 
 func main() {
 
 	errEnv := godotenv.Load()
+	if errEnv != nil {
+		pp.Print(errEnv)
+	}
 	var wg sync.WaitGroup
 	port := os.Getenv("PORT")
 	host := os.Getenv("HOST")
@@ -39,14 +38,16 @@ func main() {
 		rabbitmq.StartConsumer(ch, conn)
 		wg.Done()
 	}()
+	// wg.Add(1)
+	// go func() {
+	// 	watcher.StartWatcher()
+	// 	wg.Done()
+	// }()
+
 	wg.Add(1)
 	go func() {
-		watcher.StartWatcher()
-		wg.Done()
+		sftp.Watcher()
 	}()
-	if errEnv != nil {
-		pp.Print(errEnv)
-	}
 
 	// addr := host + ":" + port
 	app := app.InitializedApp()
