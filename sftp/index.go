@@ -62,6 +62,7 @@ func Upload(file, fileName string) {
 	}
 	if err == nil {
 		errRmv := os.Remove(file)
+		fmt.Println("File removed successfully!")
 		exception.SendLogIfErorr(errRmv, "63")
 	}
 	// ini yang bikin gabisa upload file
