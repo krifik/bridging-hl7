@@ -54,11 +54,11 @@ func Route(app *fiber.App, fileController controller.FileController) {
 		// Attempt to publish a message to the queue.
 		if err := channelRabbitMQ.PublishWithContext(
 			ctx,
-			"",      // exchange
-			"coba",  // queue name
-			false,   // mandatory
-			false,   // immediate
-			message, // message to publish
+			"",                // exchange
+			"bridging_result", // queue name
+			false,             // mandatory
+			false,             // immediate
+			message,           // message to publish
 		); err != nil {
 			return err
 		}
