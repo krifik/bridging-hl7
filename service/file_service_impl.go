@@ -9,6 +9,7 @@ import (
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/model"
 	"github.com/krifik/bridging-hl7/repository"
+	"github.com/krifik/bridging-hl7/sftp"
 	"github.com/krifik/bridging-hl7/utils"
 
 	helper "github.com/krifik/bridging-hl7/helper"
@@ -186,6 +187,8 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	file.Obx.Items = obxResult
 	file.Obx.Type = "[OBX]"
 	fileValues := helper.GetStructValues(file)
-	errFile := helper.WriteLineByLine(fileValues, onoFileName)
+	resultFile, fileName, errFile := helper.WriteLineByLine(fileValues, onoFileName)
+
+	sftp.Upload(resultFile.Name(), fileName)
 	return "File created", errFile
 }
