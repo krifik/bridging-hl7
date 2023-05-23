@@ -25,6 +25,6 @@ type OrderJson struct {
 }
 
 type Json struct {
-	Pattern   string    `json:"bridging_order"`
+	Pattern   string    `json:"pattern"`
 	OrderJson OrderJson `json:"data"`
 }
