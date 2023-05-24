@@ -76,8 +76,8 @@ func Upload(file, fileName, orderNumber, labNumber string) {
 	if err == nil {
 		err = os.Remove(file)
 		exception.SendLogIfErorr(err, "68")
-		// err = os.Remove(pdf.Name())
-		// exception.SendLogIfErorr(err, "70")
+		err = os.Remove(pdf.Name())
+		exception.SendLogIfErorr(err, "70")
 		pp.SetColorScheme(pp.ColorScheme{
 			String: pp.Red,
 		})
