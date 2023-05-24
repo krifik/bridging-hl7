@@ -13,7 +13,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
-	"github.com/k0kubun/pp"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -62,7 +61,6 @@ func Route(app *fiber.App, fileController controller.FileController) {
 		); err != nil {
 			return err
 		}
-		pp.Println("published")
 
 		return nil
 	})

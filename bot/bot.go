@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -19,38 +18,14 @@ import (
 )
 
 func StartBot() {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("Recovered from panic:", r)
-			utils.SendMessage("LINE 23 \nLog Type: Error\n" + "Error: \n" + r.(error).Error() + "\n")
-			wd, err := os.Getwd()
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			cmd := exec.Command("go", "run", "bot.go")
-			cmd.Dir = wd
-			output, err := cmd.Output()
-			if err != nil {
-				fmt.Println(err)
-				fmt.Println(cmd)
-			}
-			fmt.Println(string(output))
-		}
-	}()
+
 	godotenv.Load()
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_API_TOKEN"))
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	bot.Debug = true
-	updateConfig := tgbotapi.NewUpdate(0)
-
-	// Tell Telegram we should wait up to 30 seconds on each request for an
-	// update. This way we can get information just as quickly as making many
-	// frequent requests without having to send nearly as many.
-	updateConfig.Timeout = 30
+	bot.Debug = false
 
 	// Start polling Telegram for updates.
 

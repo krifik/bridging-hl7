@@ -189,6 +189,6 @@ func (f *FileServiceImpl) CreateFileResult(request model.JSONRequest) (string, e
 	fileValues := helper.GetStructValues(file)
 	resultFile, fileName, errFile := helper.WriteLineByLine(fileValues, onoFileName)
 
-	sftp.Upload(resultFile.Name(), fileName)
+	sftp.Upload(resultFile.Name(), fileName, file.Obr.Ono, file.Obr.Lno)
 	return "File created", errFile
 }

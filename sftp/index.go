@@ -2,6 +2,7 @@ package sftp
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -19,7 +20,7 @@ import (
 // 	client *sftp.Client
 // }
 
-func Upload(file, fileName string) {
+func Upload(file, fileName, orderNumber, labNumber string) {
 	err := godotenv.Load()
 	exception.SendLogIfErorr(err, "13")
 
@@ -39,36 +40,58 @@ func Upload(file, fileName string) {
 
 	}
 	defer conn.Close()
-
+	pdf, err := helper.GetPDF(orderNumber, labNumber)
+	exception.SendLogIfErorr(err, "42")
+	defer pdf.Close()
 	sftp, err := sftp.NewClient(conn)
 	if err != nil {
-		exception.SendLogIfErorr(err, "40")
+		exception.SendLogIfErorr(err, "44")
 	}
 	localFile, err := os.Open(file)
 	if err != nil {
-		exception.SendLogIfErorr(err, "45")
+		exception.SendLogIfErorr(err, "47")
 	}
 	defer localFile.Close()
-
 	remoteFile, err := sftp.OpenFile(os.Getenv("SFTP_RESULT_DIR")+"/"+fileName+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 
 	if err != nil {
 		exception.SendLogIfErorr(err, "53")
 	}
+	remoteFilePdf, err := sftp.Create(os.Getenv("SFTP_RESULT_DIR") + "/" + fileName + ".pdf")
+	exception.SendLogIfErorr(err, "53")
 
 	defer remoteFile.Close()
+	defer remoteFilePdf.Close()
 	_, err = remoteFile.ReadFrom(localFile)
 	if err != nil {
 		exception.SendLogIfErorr(err, "59")
 	}
+
+	pdfData, err := ioutil.ReadFile(pdf.Name())
+	exception.SendLogIfErorr(err, "70")
+	_, err = remoteFilePdf.Write(pdfData)
+	if err != nil {
+		exception.SendLogIfErorr(err, "59")
+	}
 	if err == nil {
-		errRmv := os.Remove(file)
-		fmt.Println("File removed successfully!")
-		exception.SendLogIfErorr(errRmv, "63")
+		err = os.Remove(file)
+		exception.SendLogIfErorr(err, "68")
+		// err = os.Remove(pdf.Name())
+		// exception.SendLogIfErorr(err, "70")
+		pp.SetColorScheme(pp.ColorScheme{
+			String: pp.Red,
+		})
+		pp.Println("Local file removed successfully! " + fileName)
+		pp.ResetColorScheme()
+		exception.SendLogIfErorr(err, "63")
+		pp.SetColorScheme(pp.ColorScheme{
+			String: pp.Cyan,
+		})
+		pp.Println("File uploaded successfully to sftp server! " + fileName)
+		pp.ResetColorScheme()
 	}
 	// ini yang bikin gabisa upload file
 	// defer sftp.Close()
-	fmt.Println("File uploaded successfully!")
 }
 
 func Watcher() {
@@ -113,15 +136,23 @@ func Watcher() {
 		for _, file := range files {
 			// Check if the file is newer than the last known modification time
 			if file.ModTime().After(lastModified) {
+				scheme := pp.ColorScheme{
+					// Integer: pp.Green | pp.Bold,
+					Float:  pp.Black | pp.BackgroundWhite | pp.Bold,
+					String: pp.Blue,
+				}
+				pp.SetColorScheme(scheme)
 				pp.Println("New file detected:", file.Name())
 				fileContent := helper.GetContentSftpFile(file.Name(), sftpClient)
 				// Update the last known modification time
 				// helper.SendToAPI(fileContent)
 				// pp.Println(fileContent)
-				errPublish := helper.SendJsonToRabbitMQ(fileContent)
-				exception.SendLogIfErorr(errPublish, "122")
+				err = helper.SendJsonToRabbitMQ(fileContent)
+				exception.SendLogIfErorr(err, "122")
 				lastModified = file.ModTime()
-
+				// if err == nil {
+				// 	sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
+				// }
 			}
 		}
 

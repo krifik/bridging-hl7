@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -241,6 +243,41 @@ func SendToAPI(fileContent model.Json) {
 		}
 	}
 }
+func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
+
+	var xCons string = os.Getenv("X-CONS")
+	var xSign string = os.Getenv("X-SIGN")
+	apiUrl := os.Getenv("API_EXTERNAL") + "/api/v1/getResult/pdf?no_laboratorium=" + labNumber
+
+	// Send an HTTP GET request to the API endpoint for the PDF file.
+	req, err := http.NewRequest("GET", apiUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("x-cons", xCons)
+	req.Header.Set("x-sign", xSign)
+
+	// Send the HTTP request.
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	orderNumber = strings.Split(orderNumber, "=")[1]
+	file, err := os.Create(os.Getenv("RESULTDIR") + orderNumber + ".pdf")
+	if err != nil {
+		return nil, err
+	}
+
+	// Write the response body to the file.
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
+}
 
 func SendJsonToRabbitMQ(request model.Json) error {
 
@@ -254,20 +291,30 @@ func SendJsonToRabbitMQ(request model.Json) error {
 		ContentType: "application/json",
 		Body:        jsonData,
 	}
-	// pp.Println(request)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	defer ch.Close()
-	// Attempt to publish a message to the queue.
-	if err := ch.PublishWithContext(
-		ctx,
-		"",               // exchange
-		"bridging_order", // queue name
-		false,            // mandatory
-		false,            // immediate
-		message,          // message to publish
-	); err != nil {
-		return err
+	if request.OrderJson.NoOrder != "" {
+		scheme := pp.ColorScheme{
+			// Integer: pp.Green | pp.Bold,
+			Float:  pp.Black | pp.BackgroundWhite | pp.Bold,
+			String: pp.Green,
+		}
+
+		// Register it for usage
+		pp.SetColorScheme(scheme)
+		pp.Println("SEND DATA TO RABBITMQ WITH NO ORDER" + request.OrderJson.NoOrder)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		defer ch.Close()
+		// Attempt to publish a message to the queue.
+		if err := ch.PublishWithContext(
+			ctx,
+			"",               // exchange
+			"bridging_order", // queue name
+			false,            // mandatory
+			false,            // immediate
+			message,          // message to publish
+		); err != nil {
+			return err
+		}
 	}
 
 	return nil
