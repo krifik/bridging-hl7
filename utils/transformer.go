@@ -181,6 +181,7 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 		}
 	}
 
+	rightJson.OrderJson.Icd10 = []model.Icd10{}
 	rightJson.OrderJson.Order = resultOrders
 	rightJson.OrderJson.DetailRujukan = detailRujukan
 	rightJson.Pattern = "bridging_order"
