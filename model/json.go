@@ -5,7 +5,7 @@ type OrderJson struct {
 	NoRm          string    `json:"no_rm"`
 	NoOrder       string    `json:"no_order"`
 	NamaPasien    string    `json:"nama_pasien"`
-	TempatLahir   string    `json:"templat_lahir"`
+	TempatLahir   string    `json:"tempat_lahir"`
 	TglLahir      string    `json:"tgl_lahir"`
 	Jk            string    `json:"jk"`
 	Alamat        string    `json:"alamat"`
