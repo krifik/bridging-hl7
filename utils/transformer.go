@@ -86,8 +86,15 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.OrderJson.Diagnosa = item.(string)
 		}
 		if index == "pstatus" {
-			penjamin := strings.Split(item.(string), "|")[0]
-			idPenjamin := strings.Split(item.(string), "|")[1]
+			penjaminLen := strings.Split(item.(string), "|")
+			var penjamin string
+			var idPenjamin string
+			if len(penjaminLen) > 1 {
+				idPenjamin = strings.Split(item.(string), "|")[1]
+			} else {
+				idPenjamin = ""
+				penjamin = strings.Split(item.(string), "|")[0]
+			}
 			rightJson.OrderJson.Penjamin = penjamin
 			rightJson.OrderJson.IdPenjamin = idPenjamin
 			rightJson.OrderJson.JenisPasien = "ASURANSI"
@@ -118,8 +125,14 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.OrderJson.NoPendaftaran = item.(string)
 		}
 		if index == "clinician" {
-			dokter := strings.Split(item.(string), "|")[0]
-			idDokter := strings.Split(item.(string), "|")[1]
+			clinicianLen := strings.Split(item.(string), "|")
+			var dokter string
+			var idDokter string
+			if len(clinicianLen) > 1 {
+				idDokter = strings.Split(item.(string), "|")[1]
+			} else {
+				dokter = strings.Split(item.(string), "|")[0]
+			}
 			rujukanClinician := model.Rujukan{
 				IdDokter:   idDokter,
 				NamaDokter: dokter,
