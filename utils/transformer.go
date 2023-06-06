@@ -125,14 +125,16 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.OrderJson.NoPendaftaran = item.(string)
 		}
 		if index == "clinician" {
-			clinicianLen := strings.Split(item.(string), "|")
 			var dokter string
 			var idDokter string
-			if len(clinicianLen) > 1 {
-				idDokter = strings.Split(item.(string), "|")[1]
-			} else {
+			if strings.Contains(item.(string), "|") {
+				clinicianLen := strings.Split(item.(string), "|")
+				if len(clinicianLen) > 1 {
+					idDokter = strings.Split(item.(string), "|")[1]
+				}
 				dokter = strings.Split(item.(string), "|")[0]
 			}
+
 			rujukanClinician := model.Rujukan{
 				IdDokter:   idDokter,
 				NamaDokter: dokter,
