@@ -252,10 +252,7 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 	apiUrl := os.Getenv("API_EXTERNAL") + "/api/v1/getResult/pdf"
 	// Send an HTTP GET request to the API endpoint for the PDF file.
 	req, err := http.NewRequest("GET", apiUrl, nil)
-	req.URL.RawQuery = "no_laboratorium=" + labNumber
-	req.URL.RawQuery = "language=id"
-	req.URL.RawQuery = "paper=a4"
-	req.URL.RawQuery = "plain=false"
+	req.URL.RawQuery = "no_laboratorium=" + labNumber + "&language=id" + "&paper=a4" + "plain=false"
 
 	if err != nil {
 		return nil, err
