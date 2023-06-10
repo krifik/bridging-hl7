@@ -272,12 +272,14 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 		return nil, err
 	}
 	log.Printf("HTTP status: %d", resp.StatusCode)
-	for key, values := range resp.Header {
+	for key, values := range req.Header {
 		for _, value := range values {
 			log.Printf("%s: %s", key, value)
 		}
 	}
-
+	if resp.StatusCode != 200 {
+		return nil, err
+	}
 	// Write the response body to the file.
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
