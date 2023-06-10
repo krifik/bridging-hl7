@@ -277,9 +277,6 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 			log.Printf("%s: %s", key, value)
 		}
 	}
-	if resp.StatusCode != 200 {
-		return nil, err
-	}
 	// Write the response body to the file.
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {

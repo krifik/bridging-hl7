@@ -154,6 +154,9 @@ func Watcher() {
 				lastModified = file.ModTime()
 				if err == nil {
 					sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
+					pp.SetColorScheme(pp.ColorScheme{
+						String: pp.Red,
+					})
 					pp.Println("Delete file " + file.Name() + "after send to rabbitmq successfully!")
 				}
 			}
