@@ -11,6 +11,7 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/helper"
+	"github.com/krifik/bridging-hl7/utils"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -87,6 +88,7 @@ func Upload(file, fileName, orderNumber, labNumber string) {
 		pp.SetColorScheme(pp.ColorScheme{
 			String: pp.Cyan,
 		})
+		utils.SendMessage("FILE CONTENT PDF" + "\n" + string(pdfData))
 		pp.Println("File uploaded successfully to sftp server! " + fileName)
 		pp.ResetColorScheme()
 	}
@@ -150,9 +152,9 @@ func Watcher() {
 				err = helper.SendJsonToRabbitMQ(fileContent)
 				exception.SendLogIfErorr(err, "122")
 				lastModified = file.ModTime()
-				// if err == nil {
-				// 	sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
-				// }
+				if err == nil {
+					sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
+				}
 			}
 		}
 
