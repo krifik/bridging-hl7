@@ -244,7 +244,8 @@ func SendToAPI(fileContent model.Json) {
 	}
 }
 func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
-
+	err := godotenv.Load()
+	exception.SendLogIfErorr(err, "247")
 	var xCons string = os.Getenv("X-CONS")
 	var xSign string = os.Getenv("X-SIGN")
 	labNumber = strings.Split(labNumber, "=")[1]
