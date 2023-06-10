@@ -88,7 +88,7 @@ func Upload(file, fileName, orderNumber, labNumber string) {
 		pp.SetColorScheme(pp.ColorScheme{
 			String: pp.Cyan,
 		})
-		utils.SendMessage("FILE CONTENT PDF" + "\n" + string(pdfData))
+
 		pp.Println("File uploaded successfully to sftp server! " + fileName)
 		pp.ResetColorScheme()
 	}
