@@ -7,7 +7,6 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/app"
-	"github.com/krifik/bridging-hl7/bot"
 	"github.com/krifik/bridging-hl7/config"
 	_ "github.com/krifik/bridging-hl7/docs"
 	"github.com/krifik/bridging-hl7/exception"
@@ -26,11 +25,11 @@ func main() {
 	host := os.Getenv("HOST")
 	url := host + ":" + port
 
-	wg.Add(1)
-	go func() {
-		bot.StartBot()
-		wg.Done()
-	}()
+	// wg.Add(1)
+	// go func() {
+	// 	bot.StartBot()
+	// 	wg.Done()
+	// }()
 
 	wg.Add(1)
 	go func() {
