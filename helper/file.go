@@ -252,11 +252,9 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 	apiUrl := os.Getenv("API_EXTERNAL") + "/api/v1/getResult/pdf"
 	// Send an HTTP GET request to the API endpoint for the PDF file.
 	req, err := http.NewRequest("GET", apiUrl, nil)
-	q := req.URL.Query()
-	q.Add("no_laboratorium", labNumber)
-	q.Add("language", "id")
-	q.Add("plain", "false")
-	req.URL.RawQuery = q.Encode()
+	req.URL.RawQuery = "no_laboratorium=" + labNumber
+	req.URL.RawQuery = "languade=id"
+	req.URL.RawQuery = "plain=false"
 
 	if err != nil {
 		return nil, err
@@ -277,6 +275,7 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 		return nil, err
 	}
 	log.Printf("HTTP status: %d", resp.StatusCode)
+	log.Printf("Request URL: %s", req.URL)
 	for key, values := range req.Header {
 		for _, value := range values {
 			log.Printf("%s: %s", key, value)
