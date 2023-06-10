@@ -49,9 +49,10 @@ func main() {
 	}()
 
 	// addr := host + ":" + port
-	app := app.InitializedApp()
 	// Start App
+	wg.Add(1)
 	go func() {
+		app := app.InitializedApp()
 		err := app.Listen(url)
 		exception.PanicIfNeeded(err)
 	}()
