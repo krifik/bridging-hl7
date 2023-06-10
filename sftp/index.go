@@ -11,7 +11,6 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/helper"
-	"github.com/krifik/bridging-hl7/utils"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
