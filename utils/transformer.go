@@ -91,8 +91,8 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			var idPenjamin string
 			if len(penjaminLen) > 1 {
 				idPenjamin = strings.Split(item.(string), "|")[1]
+				penjamin = strings.Split(item.(string), "|")[0]
 			} else {
-				idPenjamin = ""
 				penjamin = strings.Split(item.(string), "|")[0]
 			}
 			rightJson.OrderJson.Penjamin = penjamin
