@@ -154,8 +154,8 @@ func Watcher() {
 				lastModified = file.ModTime()
 				if err == nil {
 					sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
+					pp.Println("Delete file " + file.Name() + "after send to rabbitmq successfully!")
 				}
-				pp.Print("Delete file " + file.Name() + "after send to rabbitmq successfully!\n")
 			}
 		}
 
