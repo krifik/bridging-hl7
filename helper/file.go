@@ -249,10 +249,15 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 	var xCons string = os.Getenv("X-CONS")
 	var xSign string = os.Getenv("X-SIGN")
 	labNumber = strings.Split(labNumber, "=")[1]
-	apiUrl := os.Getenv("API_EXTERNAL") + "/api/v1/getResult/pdf?no_laboratorium=" + labNumber + "language=id&plain=false&paper=A4"
-
+	apiUrl := os.Getenv("API_EXTERNAL") + "/api/v1/getResult/pdf"
 	// Send an HTTP GET request to the API endpoint for the PDF file.
 	req, err := http.NewRequest("GET", apiUrl, nil)
+	q := req.URL.Query()
+	q.Add("no_laboratorium", labNumber)
+	q.Add("language", "id")
+	q.Add("plain", "false")
+	req.URL.RawQuery = q.Encode()
+
 	if err != nil {
 		return nil, err
 	}
@@ -280,6 +285,9 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 	// Write the response body to the file.
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
 		return nil, err
 	}
 
