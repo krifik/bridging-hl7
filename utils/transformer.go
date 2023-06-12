@@ -48,9 +48,9 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 		}
 		if index == "sex" {
 			if item == 1 {
-				rightJson.OrderJson.Jk = "P"
-			} else {
 				rightJson.OrderJson.Jk = "L"
+			} else {
+				rightJson.OrderJson.Jk = "P"
 			}
 		}
 
