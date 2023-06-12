@@ -3,6 +3,7 @@ package utils
 import (
 	"strings"
 
+	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/model"
 )
 
@@ -38,6 +39,7 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.OrderJson.RujukanAsal = "1"
 		}
 		if index == "birth_dt" {
+			pp.Println(item.(string))
 			year := item.(string)[0:4]
 			month := item.(string)[4:6]
 			date := item.(string)[6:8]
