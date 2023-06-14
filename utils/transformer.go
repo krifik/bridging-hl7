@@ -35,11 +35,9 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 		if index == "street" {
 			rightJson.OrderJson.Alamat = item.(string)
 		}
-		if index == "ptype" {
-			rightJson.OrderJson.RujukanAsal = "1"
-		}
 		if index == "birth_dt" {
 			pp.Println(item.(string))
+
 			year := item.(string)[0:4]
 			month := item.(string)[4:6]
 			date := item.(string)[6:8]
@@ -48,12 +46,16 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			fullDate := year + "-" + month + "-" + date + " " + hour + ":" + minute
 			rightJson.OrderJson.TglLahir = fullDate
 		}
+		if index == "ptype" {
+			rightJson.OrderJson.RujukanAsal = "1"
+		}
 		if index == "sex" {
 			if item == 1 {
 				rightJson.OrderJson.Jk = "L"
 			} else {
 				rightJson.OrderJson.Jk = "P"
 			}
+			pp.Println("JENIS KELAMIN : "+rightJson.OrderJson.Jk)
 		}
 
 		if index == "ono" {
