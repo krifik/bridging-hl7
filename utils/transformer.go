@@ -50,12 +50,15 @@ func TransformToRightJson(data map[string]interface{}) model.Json {
 			rightJson.OrderJson.RujukanAsal = "1"
 		}
 		if index == "sex" {
-			if item == 1 {
+			pp.Println("KODE JENIS KELAMIN : " + item.(string))
+			if item.(string) == "1" {
 				rightJson.OrderJson.Jk = "L"
-			} else {
+			} else if item.(string) == "2" {
 				rightJson.OrderJson.Jk = "P"
+			} else {
+				rightJson.OrderJson.Jk = "U"
 			}
-			pp.Println("JENIS KELAMIN : "+rightJson.OrderJson.Jk)
+			pp.Println("JENIS KELAMIN : " + rightJson.OrderJson.Jk)
 		}
 
 		if index == "ono" {
