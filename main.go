@@ -56,6 +56,8 @@ func main() {
 		err := app.Listen(url)
 		exception.PanicIfNeeded(err)
 	}()
+	wg.Add(1)
+	config.Migrate()
 	wg.Wait()
 
 }
