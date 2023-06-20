@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp"
-	"github.com/krifik/bridging-hl7/config"
 	"github.com/krifik/bridging-hl7/entity"
 	"github.com/krifik/bridging-hl7/exception"
 	"github.com/krifik/bridging-hl7/helper"
@@ -99,11 +99,10 @@ func Upload(file, fileName, orderNumber, labNumber string) {
 	// defer sftp.Close()
 }
 
-func Watcher() {
+func Watcher(db *gorm.DB, what chan bool) {
 	err := godotenv.Load()
 	exception.SendLogIfErorr(err, "13")
-	db := config.InitializedSqlite()
-
+	isNoInternet := <-what
 	// Directory to monitor for new files
 	remoteDir := os.Getenv("SFTP_ORDER_DIR")
 	sftpUrl := os.Getenv("SFTP_URL")
@@ -112,10 +111,15 @@ func Watcher() {
 	// Track the last modified time of the latest file
 	var lastModified time.Time
 	var sftpClient *sftp.Client
+	var isConnected int = 0
+	var errDir error
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 	for {
+
 		select {
-		case <-time.After(5 * time.Second):
-			if sftpClient == nil {
+		case <-ticker.C:
+			if sftpClient == nil || errDir != nil || isNoInternet {
 				pp.Println("Connecting to SFTP server...")
 				config := &ssh.ClientConfig{
 					User: user,
@@ -125,28 +129,46 @@ func Watcher() {
 					},
 					// HostKeyCallback: hostKeyCallback,
 					HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-					Timeout:         30 * time.Second,
+					// Timeout:         30 * time.Second,
 				}
 				conn, errConn := ssh.Dial("tcp", sftpUrl, config)
 				if errConn != nil {
 					log.Println("Failed to dial: " + errConn.Error())
+					isConnected = 0
+					continue
 					// conn.Close()
 				}
-
-				sftpClient, err = sftp.NewClient(conn)
+				if conn != nil {
+					sftpClient, err = sftp.NewClient(conn)
+				}
 				if err != nil {
 					log.Println("Failed to create SFTP client: " + err.Error())
+					isConnected = 0
+
+				}
+				if err == nil && errConn == nil {
+					errDir = nil
 				}
 			}
 		}
 
 		if sftpClient != nil {
-			pp.Println("Connected to SFTP Server!")
+			// Check if the SFTP session is still connected
+
+			isConnected += 1
+			// time.Sleep(1 * time.Second)
+			if isConnected == 1 {
+				pp.Println("Connected to SFTP Server!")
+			}
+
 			// List files in the remote directory
 			files, err := sftpClient.ReadDir(remoteDir)
 			if err != nil {
-				fmt.Printf("Failed to read remote directory: %v", err)
-
+				fmt.Printf("Failed to read remote directory: %v \n", err)
+				errDir = err
+				isConnected = 0
+				sftpClient.Close()
+				// continue
 			}
 
 			// Iterate over the files
@@ -168,12 +190,14 @@ func Watcher() {
 					// Update the last known modification time
 					// helper.SendToAPI(fileContent)
 					// pp.Println(fileContent)
-					err = helper.SendJsonToRabbitMQ(fileContent)
-					exception.SendLogIfErorr(err, "122")
+					fileExist := db.Where("file_name = ?", file.Name()).First(&entity.File{})
+					if errors.Is(fileExist.Error, gorm.ErrRecordNotFound) {
+						err = helper.SendJsonToRabbitMQ(fileContent)
+					}
+					exception.SendLogIfErorr(err, "171")
 
 					lastModified = file.ModTime()
 					if err == nil {
-						fileExist := db.Where("file_name = ?", file.Name()).First(&entity.File{})
 
 						if errors.Is(fileExist.Error, gorm.ErrRecordNotFound) {
 							db.Create(&entity.File{FileName: file.Name(), ReadState: true})
@@ -190,11 +214,13 @@ func Watcher() {
 				isExist := db.Where("file_name = ?", file.Name()).Or(db.Where("read_state = ?", true)).First(&ReSendFileExist)
 				// pp.Println(reFindFile)
 				if errors.Is(isExist.Error, gorm.ErrRecordNotFound) {
-					db.Create(&entity.File{FileName: file.Name(), ReadState: true})
 					fileContentReFindCreate := helper.GetContentSftpFile(file.Name(), sftpClient)
 					err = helper.SendJsonToRabbitMQ(fileContentReFindCreate)
-					exception.SendLogIfErorr(err, "186")
-					pp.Println("Store to DB successfully!")
+					exception.SendLogIfErorr(err, "194")
+					if err == nil {
+						db.Create(&entity.File{FileName: file.Name(), ReadState: true})
+						pp.Println("Store to DB successfully!")
+					}
 				}
 				var filesReadState []entity.File
 				db.Where("read_state = ?", false).Find(&filesReadState)
@@ -208,14 +234,23 @@ func Watcher() {
 						pp.Println("UPDATED READ STATE TO 1 : " + item.FileName)
 						fileContentReFind := helper.GetContentSftpFile(item.FileName, sftpClient)
 						err = helper.SendJsonToRabbitMQ(fileContentReFind)
-						exception.SendLogIfErorr(err, "122")
+						exception.SendLogIfErorr(err, "213")
 					}
 				}
 
 			}
-		} else {
-			continue
 		}
+
 	}
 
+}
+
+// Helper function to check if the error indicates a disconnected SFTP session
+func isDisconnectedError(err error) bool {
+	if netErr, ok := err.(*net.OpError); ok {
+		if netErr.Op == "read" || netErr.Op == "write" {
+			return true
+		}
+	}
+	return false
 }
