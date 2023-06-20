@@ -1,11 +1,20 @@
 package entity
 
 import (
-	"time"
+	"github.com/k0kubun/pp"
+	"gorm.io/gorm"
 )
 
 type File struct {
-	ID        int    `gorm:"primaryKey,not null,autoIncrement;uniqueIndex;"`
-	FileName  string `gorm:"size:256"`
-	CreatedAt time.Time
+	gorm.Model
+	FileName  string `gorm:"unique;size:256"`
+	ReadState bool   `gorm:"default:false"`
+}
+
+func Migrate(db *gorm.DB) {
+	err := db.AutoMigrate(&File{})
+	if err != nil {
+		panic(err)
+	}
+	pp.Println("Migrate")
 }

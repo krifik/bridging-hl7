@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -285,6 +286,7 @@ func GetPDF(orderNumber string, labNumber string) (*os.File, error) {
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
+		utils.SendMessage("LINE 288 \nAPI KE MEDQLAB SERVICE ERROR\n" + "Log Type: Error\n\n" + "Error: \n" + "Status Code " + strconv.Itoa(resp.StatusCode))
 		return nil, err
 	}
 
