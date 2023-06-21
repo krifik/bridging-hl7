@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -24,7 +23,7 @@ func main() {
 	if errEnv != nil {
 		pp.Print(errEnv)
 	}
-	noInternet := make(chan bool)
+	noInternet := make(chan bool, 2)
 	// var msg string
 	var wg sync.WaitGroup
 	port := os.Getenv("PORT")
@@ -66,20 +65,26 @@ func main() {
 	}()
 	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for {
-			time.Sleep(5 * time.Second)
-			_, err := net.Dial("tcp", "google.com:80")
+			time.Sleep(2 * time.Second)
+			conn, err := net.Dial("tcp", "google.com:80")
 			if err != nil {
-				fmt.Println("No internet connection")
+				// pp.Println("No internet connection")
 				// os.Exit(1)
 				noInternet <- true
-			} else {
 				// conn.Close()
+			} else {
 				noInternet <- false
-				fmt.Println("Internet connection detected")
+				pp.SetColorScheme(pp.ColorScheme{
+					String: pp.Green,
+				})
+				// pp.Println("Internet connection detected")
+				conn.Close()
 			}
 		}
 	}()
+
 	wg.Wait()
 
 }

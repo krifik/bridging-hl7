@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/k0kubun/pp"
 	"github.com/krifik/bridging-hl7/exception"
@@ -20,6 +21,7 @@ func InitializedRabbitMQ() (*amqp.Channel, *amqp.Connection) {
 	log.Println("URL : " + url)
 	conn, err := amqp.Dial(url)
 	if conn == nil {
+		time.Sleep(3 * time.Second)
 		pp.Println("Reconnecting RabbitMQ . . .")
 		return InitializedRabbitMQ()
 	}

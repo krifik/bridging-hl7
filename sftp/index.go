@@ -102,7 +102,7 @@ func Upload(file, fileName, orderNumber, labNumber string) {
 func Watcher(db *gorm.DB, what chan bool) {
 	err := godotenv.Load()
 	exception.SendLogIfErorr(err, "13")
-	isNoInternet := <-what
+
 	// Directory to monitor for new files
 	remoteDir := os.Getenv("SFTP_ORDER_DIR")
 	sftpUrl := os.Getenv("SFTP_URL")
@@ -116,7 +116,7 @@ func Watcher(db *gorm.DB, what chan bool) {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 	for {
-
+		isNoInternet := <-what
 		select {
 		case <-ticker.C:
 			if sftpClient == nil || errDir != nil || isNoInternet {
@@ -152,7 +152,7 @@ func Watcher(db *gorm.DB, what chan bool) {
 			}
 		}
 
-		if sftpClient != nil {
+		if sftpClient != nil && !isNoInternet {
 			// Check if the SFTP session is still connected
 
 			isConnected += 1
