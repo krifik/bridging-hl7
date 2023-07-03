@@ -200,7 +200,7 @@ func Watcher(db *gorm.DB, what chan bool) {
 					if err == nil {
 
 						if errors.Is(fileExist.Error, gorm.ErrRecordNotFound) {
-							db.Create(&entity.File{FileName: file.Name(), ReadState: true})
+							db.Create(&entity.File{FileName: file.Name(), ReadState: true, ModifiedTime: file.ModTime()})
 							pp.Println("Store to DB successfully!")
 						}
 						sftpClient.Remove(os.Getenv("SFTP_ORDER_DIR") + "/" + file.Name() + ".txt")
@@ -218,7 +218,7 @@ func Watcher(db *gorm.DB, what chan bool) {
 					err = helper.SendJsonToRabbitMQ(fileContentReFindCreate)
 					exception.SendLogIfErorr(err, "194")
 					if err == nil {
-						db.Create(&entity.File{FileName: file.Name(), ReadState: true})
+						db.Create(&entity.File{FileName: file.Name(), ReadState: true, ModifiedTime: file.ModTime()})
 						pp.Println("Store to DB successfully!")
 					}
 				}
