@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"time"
-
 	"github.com/krifik/bridging-hl7/entity"
 	"github.com/krifik/bridging-hl7/model"
 
@@ -27,10 +25,9 @@ func (f *FileRepositoryImpl) FindLatest() (entity.File, error) {
 }
 
 func (f *FileRepositoryImpl) Insert(request model.FileRequest) error {
-	file := entity.File{
-		FileName:  request.FileName,
-		CreatedAt: time.Now(),
-	}
-	f.DB.Create(&file)
+	// file := entity.File{
+	// 	FileName: request.FileName,
+	// }
+	// f.DB.Create(&file)
 	return nil
 }
