@@ -187,7 +187,7 @@ func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) 
 }
 func GetContentSftpFile(fileName string, client *sftp.Client) model.Json {
 	file, fileError := client.Open(os.Getenv("SFTP_ORDER_DIR") + "/" + fileName)
-	var text = make([]byte, 1024)
+	var text = make([]byte, 4096)
 	if fileError != nil {
 		utils.SendMessage("LINE 26\n" + "Log Type: Error\n" + "Error: \n" + fileError.Error() + "\n")
 	}
