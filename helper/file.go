@@ -300,7 +300,7 @@ func SendJsonToRabbitMQ(request model.Json) error {
 	defer conn.Close()
 
 	jsonData, errJson := json.Marshal(request)
-	// pp.Print(string(jsonData))
+	pp.Print(string(jsonData))
 	exception.SendLogIfErorr(errJson, "22")
 	message := amqp.Publishing{
 		ContentType: "application/json",
