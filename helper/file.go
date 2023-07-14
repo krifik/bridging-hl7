@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -187,7 +188,7 @@ func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) 
 }
 func GetContentSftpFile(fileName string, client *sftp.Client) model.Json {
 	file, fileError := client.Open(os.Getenv("SFTP_ORDER_DIR") + "/" + fileName)
-	var text = make([]byte, 4096)
+	var text = make([]byte, math.MaxInt32)
 	if fileError != nil {
 		utils.SendMessage("LINE 26\n" + "Log Type: Error\n" + "Error: \n" + fileError.Error() + "\n")
 	}
