@@ -163,11 +163,14 @@ func GetStructValues(s interface{}) []string {
 func GetAliasName(name string) string {
 	words := strings.Split(name, " ")
 	var aliasNameSlice []string
-	for _, w := range words {
-		aliasNameSlice = append(aliasNameSlice, string(w[0]))
+	if len(words) > 0 {
+		for _, w := range words {
+			aliasNameSlice = append(aliasNameSlice, string(w[0]))
+		}
+		aliasName := strings.Join(aliasNameSlice, "")
+		return aliasName
 	}
-	aliasName := strings.Join(aliasNameSlice, "")
-	return aliasName
+	return ""
 }
 
 func SearchExaminationsByPanelID(exams []model.Examinations, targetPanelID int) *model.Children {
