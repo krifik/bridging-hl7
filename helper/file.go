@@ -163,7 +163,7 @@ func GetStructValues(s interface{}) []string {
 func GetAliasName(name string) string {
 	words := strings.Split(name, " ")
 	var aliasNameSlice []string
-	if len(words) > 0 {
+	if name != "" {
 		for _, w := range words {
 			aliasNameSlice = append(aliasNameSlice, string(w[0]))
 		}
