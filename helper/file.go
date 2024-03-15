@@ -39,6 +39,7 @@ func GetContent(url string) map[string]interface{} {
 	var text = make([]byte, 1024)
 	if fileError != nil {
 		utils.SendMessage("LINE 26\n" + "Log Type: Error\n" + "Error: \n" + fileError.Error() + "\n")
+		return nil
 	}
 	defer file.Close()
 	file.Read(text)
